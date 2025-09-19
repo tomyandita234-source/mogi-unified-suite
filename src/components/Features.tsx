@@ -1,4 +1,5 @@
 import { Rocket, Shield, Zap, Headphones } from 'lucide-react';
+import ParallaxSection from './ParallaxSection';
 
 const Features = () => {
   const features = [
@@ -29,8 +30,14 @@ const Features = () => {
   ];
 
   return (
-    <section id="solusi" className="py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="solusi" className="py-24 relative overflow-hidden">
+      {/* Parallax Background */}
+      <ParallaxSection speed={0.6} className="absolute inset-0">
+        <div className="absolute top-20 right-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-accent/5 rounded-full blur-3xl"></div>
+      </ParallaxSection>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
@@ -44,8 +51,9 @@ const Features = () => {
         {/* Features Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <div 
-              key={index} 
+            <ParallaxSection
+              key={index}
+              speed={0.3 + (index * 0.1)} 
               className="text-center group animate-slide-up"
               style={{ animationDelay: `${index * 0.15}s` }}
             >
@@ -64,7 +72,7 @@ const Features = () => {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {feature.details}
               </p>
-            </div>
+            </ParallaxSection>
           ))}
         </div>
       </div>

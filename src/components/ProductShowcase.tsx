@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import ParallaxSection from './ParallaxSection';
 import { ArrowRight, ShoppingCart, Settings, Truck, FileSignature, CreditCard, BookOpen, GraduationCap, Activity, Camera } from 'lucide-react';
 import mogiPosLogo from '@/assets/mogi-pos-logo.png';
 import mogiOpsLogo from '@/assets/mogi-ops-logo.png';
@@ -164,8 +165,14 @@ const ProductShowcase = () => {
   ];
 
   return (
-    <section id="produk" className="py-24 bg-muted/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="produk" className="py-24 bg-muted/30 relative overflow-hidden">
+      {/* Parallax Background */}
+      <ParallaxSection speed={0.5} className="absolute inset-0">
+        <div className="absolute top-16 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-16 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl"></div>
+      </ParallaxSection>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
@@ -180,10 +187,11 @@ const ProductShowcase = () => {
         {/* Product Grid - Responsive 3 columns on large screens */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product, index) => (
-            <div 
-              key={product.id} 
-              className="product-card group animate-slide-up"
-              style={{ animationDelay: `${index * 0.2}s` }}
+            <ParallaxSection
+              key={product.id}
+              speed={0.2 + (index * 0.05)}
+              className="product-card group animate-slide-up card-hover"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Product Header */}
               <div className="flex items-center gap-4 mb-6">
@@ -223,7 +231,7 @@ const ProductShowcase = () => {
                 Pelajari Lebih Lanjut
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
-            </div>
+            </ParallaxSection>
           ))}
         </div>
       </div>
