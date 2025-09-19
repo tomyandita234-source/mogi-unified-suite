@@ -1,9 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ShoppingCart, Settings, Truck, FileSignature } from 'lucide-react';
+import { ArrowRight, ShoppingCart, Settings, Truck, FileSignature, CreditCard, BookOpen, GraduationCap, Activity, Camera } from 'lucide-react';
 import mogiPosLogo from '@/assets/mogi-pos-logo.png';
 import mogiOpsLogo from '@/assets/mogi-ops-logo.png';
 import mogiSignLogo from '@/assets/mogi-sign-logo.png';
 import mogiPayLogo from '@/assets/mogi-pay-logo.png';
+import mogiLibraryLogo from '@/assets/mogi-library-logo.png';
+import mogiKampuzLogo from '@/assets/mogi-kampuz-logo.png';
+import mogiDynamicsLogo from '@/assets/mogi-dynamics-logo.png';
+import mogiStudioLogo from '@/assets/mogi-studio-logo.png';
 
 const ProductShowcase = () => {
   const products = [
@@ -22,6 +26,22 @@ const ProductShowcase = () => {
       ],
       icon: ShoppingCart,
       color: 'from-cyan-500 to-blue-500'
+    },
+    {
+      id: 'pay',
+      name: 'MogiPay',
+      logo: mogiPayLogo,
+      subtitle: 'Payment Gateway Solution',
+      description: 'Solusi pembayaran digital yang aman dan terintegrasi. Mendukung berbagai metode pembayaran untuk kemudahan transaksi bisnis Anda.',
+      features: [
+        'Multi payment gateway',
+        'Keamanan tingkat bank',
+        'Real-time transaction',
+        'API integration ready',
+        'Fraud detection system'
+      ],
+      icon: CreditCard,
+      color: 'from-green-500 to-emerald-500'
     },
     {
       id: 'ops',
@@ -71,7 +91,75 @@ const ProductShowcase = () => {
         'Bulk signing capability'
       ],
       icon: FileSignature,
-      color: 'from-green-500 to-teal-500'
+      color: 'from-blue-500 to-indigo-500'
+    },
+    {
+      id: 'library',
+      name: 'Mogi Library',
+      logo: mogiLibraryLogo,
+      subtitle: 'Library Management System',
+      description: 'Sistem manajemen perpustakaan digital yang komprehensif. Kelola koleksi buku, anggota, dan peminjaman dengan mudah dan efisien.',
+      features: [
+        'Digital catalog management',
+        'Member registration system',
+        'Book lending & return tracking',
+        'Fine calculation automatic',
+        'Digital library access',
+        'Reading statistics'
+      ],
+      icon: BookOpen,
+      color: 'from-teal-500 to-cyan-500'
+    },
+    {
+      id: 'kampuz',
+      name: 'Mogi Kampuz',
+      logo: mogiKampuzLogo,
+      subtitle: 'Campus Management System',
+      description: 'Platform manajemen kampus yang terintegrasi. Solusi lengkap untuk administrasi akademik, mahasiswa, dan operasional kampus.',
+      features: [
+        'Student information system',
+        'Academic scheduling',
+        'Grade management',
+        'Online learning platform',
+        'Campus resource booking',
+        'Parent-student portal'
+      ],
+      icon: GraduationCap,
+      color: 'from-blue-600 to-purple-600'
+    },
+    {
+      id: 'dynamics',
+      name: 'Mogi Dynamics',
+      logo: mogiDynamicsLogo,
+      subtitle: 'Monitoring & Integration Solutions',
+      description: 'Solusi monitoring dan integrasi sistem yang powerful. Pantau performa aplikasi dan integrasikan berbagai sistem dengan mudah.',
+      features: [
+        'Real-time system monitoring',
+        'API integration hub',
+        'Performance analytics',
+        'Alert & notification system',
+        'Data synchronization',
+        'Custom dashboard builder'
+      ],
+      icon: Activity,
+      color: 'from-pink-500 to-rose-500'
+    },
+    {
+      id: 'studio',
+      name: 'Mogi Studio',
+      logo: mogiStudioLogo,
+      subtitle: 'Content Creation Platform',
+      description: 'Platform kreasi konten digital yang profesional. Tools lengkap untuk membuat, mengedit, dan mengelola konten multimedia bisnis Anda.',
+      features: [
+        'Drag & drop editor',
+        'Template library',
+        'Brand asset management',
+        'Collaboration tools',
+        'Multi-format export',
+        'Cloud storage integration'
+      ],
+      icon: Camera,
+      color: 'from-violet-500 to-purple-500'
     }
   ];
 
@@ -89,8 +177,8 @@ const ProductShowcase = () => {
           </p>
         </div>
 
-        {/* Product Grid */}
-        <div className="grid lg:grid-cols-2 gap-8">
+        {/* Product Grid - Responsive 3 columns on large screens */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product, index) => (
             <div 
               key={product.id} 

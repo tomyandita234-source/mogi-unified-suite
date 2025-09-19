@@ -3,9 +3,14 @@ import { Phone, Mail, MessageCircle, Globe, Smartphone, Monitor } from 'lucide-r
 const Footer = () => {
   const productLinks = [
     { name: 'Mogi POS', href: '#pos' },
+    { name: 'MogiPay', href: '#pay' },
     { name: 'Mogi Ops', href: '#ops' },
     { name: 'Mogi Fleet', href: '#fleet' },
     { name: 'MogiSign', href: '#sign' },
+    { name: 'Mogi Library', href: '#library' },
+    { name: 'Mogi Kampuz', href: '#kampuz' },
+    { name: 'Mogi Dynamics', href: '#dynamics' },
+    { name: 'Mogi Studio', href: '#studio' },
   ];
 
   const solutionLinks = [
