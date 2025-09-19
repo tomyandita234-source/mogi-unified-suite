@@ -38,13 +38,13 @@ const Testimonials = () => {
           </p>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid-3">
+        {/* Testimonials Grid - Improved spacing */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {testimonials.map((testimonial, index) => (
             <div 
               key={index} 
-              className="product-card group animate-slide-up"
-              style={{ animationDelay: `${index * 0.2}s` }}
+              className="bg-background/80 backdrop-blur-sm rounded-xl p-6 shadow-sm hover:shadow-md transition-all group animate-slide-up"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Quote Icon */}
               <div className="mb-8">

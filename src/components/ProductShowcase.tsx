@@ -15,7 +15,7 @@ const ProductShowcase = () => {
     {
       id: 'pos',
       name: 'Mogi POS',
-      logo: mogiPayLogo,
+      logo: mogiPosLogo,
       subtitle: 'Point of Sale Solution',
       description: 'Kelola transaksi, inventaris, dan laporan penjualan dengan mudah. Interface yang intuitif dan laporan real-time untuk pengambilan keputusan yang tepat.',
       features: [
@@ -184,14 +184,13 @@ const ProductShowcase = () => {
           </p>
         </div>
 
-        {/* Product Grid - Responsive 3 columns on large screens */}
-        <div className="grid-3">
+        {/* Product Grid - Apple-style minimalist design */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-16">
           {products.map((product, index) => (
-            <ParallaxSection
+            <div
               key={product.id}
-              speed={0.2 + (index * 0.05)}
-              className="product-card group animate-slide-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="product-card group animate-fade-in bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 border border-white/10"
+              style={{ animationDelay: `${index * 0.05}s` }}
             >
               {/* Product Header */}
               <div className="flex items-center gap-4 mb-8">
@@ -223,12 +222,12 @@ const ProductShowcase = () => {
                 ))}
               </div>
 
-              {/* CTA Button */}
-              <Button className="btn-outline w-full group">
+              {/* CTA Button - Apple style */}
+              <Button className="bg-white/10 hover:bg-white/20 text-white border-none rounded-full px-6 py-2 mt-4 w-full group transition-all duration-300">
                 Pelajari Lebih Lanjut
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
-            </ParallaxSection>
+            </div>
           ))}
         </div>
       </div>

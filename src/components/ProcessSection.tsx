@@ -1,7 +1,30 @@
-import ParallaxSection from './ParallaxSection';
 import { ArrowRight, UserPlus, Settings, Zap, BarChart } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import ParallaxSection from './ParallaxSection';
 
 const ProcessSection = () => {
+  const sectionRef = useRef(null);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    
+    const stepElements = document.querySelectorAll('.process-step');
+    stepElements.forEach((el) => observer.observe(el));
+    
+    return () => {
+      stepElements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+
   const steps = [
     {
       icon: UserPlus,
@@ -30,7 +53,7 @@ const ProcessSection = () => {
   ];
 
   return (
-    <section className="section-padding section-alt relative overflow-hidden">
+    <section className="section-padding section-alt relative overflow-hidden" ref={sectionRef}>
       {/* Parallax Background Elements */}
       <ParallaxSection speed={0.4} className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-1/4 w-2 h-2 bg-primary rounded-full"></div>
@@ -56,13 +79,13 @@ const ProcessSection = () => {
           {/* Connection Line */}
           <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-primary via-accent to-primary opacity-30 transform -translate-y-1/2"></div>
           
-          <div className="grid-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
             {steps.map((step, index) => (
               <ParallaxSection 
                 key={index} 
-                speed={0.3 + (index * 0.1)}
-                className="relative animate-slide-up"
-                style={{ animationDelay: `${index * 0.3}s` }}
+                speed={0.1}
+                className="relative process-step animate-slide-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="text-center group">
                   {/* Step Number & Icon */}
@@ -109,11 +132,11 @@ const ProcessSection = () => {
               Mulai gratis hari ini tanpa komitmen jangka panjang.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="btn-primary group text-lg px-10 py-4">
+              <button className="btn-primary group text-lg px-10 py-4 relative z-10">
                 Mulai Gratis Sekarang
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </button>
-              <button className="btn-outline text-lg px-10 py-4">
+              <button className="bg-white text-primary hover:bg-primary/10 border border-primary/20 rounded-full text-lg px-10 py-4 font-medium transition-all duration-300 relative z-10">
                 Jadwalkan Demo
               </button>
             </div>

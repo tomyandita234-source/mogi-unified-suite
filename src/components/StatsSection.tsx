@@ -95,14 +95,14 @@ const StatsSection = () => {
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid-4">
+        {/* Stats Grid - Improved spacing and layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
           {stats.map((stat, index) => (
             <ParallaxSection 
               key={index} 
-              speed={0.2 + (index * 0.1)}
+              speed={0.1}
               className="text-center animate-slide-up"
-              style={{ animationDelay: `${index * 0.2}s` }}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 transition-smooth hover:bg-white/20 hover:scale-105 hover:-translate-y-2">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-8 transition-smooth hover:scale-110">
