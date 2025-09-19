@@ -77,6 +77,33 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Fresh Black & White Theme Variables */
+    --bw-background: 0 0% 100%;
+    --bw-foreground: 0 0% 0%;
+    --bw-card: 0 0% 98%;
+    --bw-card-foreground: 0 0% 5%;
+    --bw-primary: 0 0% 0%;
+    --bw-primary-foreground: 0 0% 100%;
+    --bw-secondary: 0 0% 95%;
+    --bw-secondary-foreground: 0 0% 10%;
+    --bw-muted: 0 0% 96%;
+    --bw-muted-foreground: 0 0% 45%;
+    --bw-accent: 0 0% 15%;
+    --bw-accent-foreground: 0 0% 100%;
+    --bw-border: 0 0% 90%;
+    --bw-input: 0 0% 90%;
+    --bw-ring: 0 0% 20%;
+    
+    /* Black & White Gradients */
+    --bw-gradient-hero: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 97%));
+    --bw-gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.9), hsl(0 0% 95% / 0.7));
+    --bw-gradient-primary: linear-gradient(135deg, hsl(0 0% 0%), hsl(0 0% 20%));
+    
+    /* Black & White Shadows */
+    --bw-shadow-soft: 0 4px 32px -4px hsl(0 0% 0% / 0.08);
+    --bw-shadow-medium: 0 8px 64px -8px hsl(0 0% 0% / 0.12);
+    --bw-shadow-large: 0 16px 128px -16px hsl(0 0% 0% / 0.16);
   }
 
   .dark {
@@ -111,6 +138,58 @@ All colors MUST be HSL.
     /* Dark mode gradients */
     --gradient-hero: linear-gradient(180deg, hsl(220 14% 6%), hsl(220 14% 8%));
     --gradient-card: linear-gradient(145deg, hsl(220 14% 8% / 0.8), hsl(220 14% 10% / 0.6));
+
+    /* Dark Black & White Theme */
+    --bw-background: 0 0% 8%;
+    --bw-foreground: 0 0% 95%;
+    --bw-card: 0 0% 10%;
+    --bw-card-foreground: 0 0% 90%;
+    --bw-primary: 0 0% 100%;
+    --bw-primary-foreground: 0 0% 0%;
+    --bw-secondary: 0 0% 15%;
+    --bw-secondary-foreground: 0 0% 85%;
+    --bw-muted: 0 0% 12%;
+    --bw-muted-foreground: 0 0% 60%;
+    --bw-accent: 0 0% 85%;
+    --bw-accent-foreground: 0 0% 10%;
+    --bw-border: 0 0% 20%;
+    --bw-input: 0 0% 20%;
+    --bw-ring: 0 0% 80%;
+    
+    --bw-gradient-hero: linear-gradient(180deg, hsl(0 0% 8%), hsl(0 0% 10%));
+    --bw-gradient-card: linear-gradient(145deg, hsl(0 0% 10% / 0.9), hsl(0 0% 15% / 0.7));
+    --bw-gradient-primary: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 80%));
+    
+    --bw-shadow-soft: 0 4px 32px -4px hsl(0 0% 0% / 0.3);
+    --bw-shadow-medium: 0 8px 64px -8px hsl(0 0% 0% / 0.4);
+    --bw-shadow-large: 0 16px 128px -16px hsl(0 0% 0% / 0.5);
+  }
+
+  /* Black & White Theme Class */
+  .theme-bw {
+    --background: var(--bw-background);
+    --foreground: var(--bw-foreground);
+    --card: var(--bw-card);
+    --card-foreground: var(--bw-card-foreground);
+    --popover: var(--bw-card);
+    --popover-foreground: var(--bw-card-foreground);
+    --primary: var(--bw-primary);
+    --primary-foreground: var(--bw-primary-foreground);
+    --secondary: var(--bw-secondary);
+    --secondary-foreground: var(--bw-secondary-foreground);
+    --muted: var(--bw-muted);
+    --muted-foreground: var(--bw-muted-foreground);
+    --accent: var(--bw-accent);
+    --accent-foreground: var(--bw-accent-foreground);
+    --border: var(--bw-border);
+    --input: var(--bw-input);
+    --ring: var(--bw-ring);
+    --gradient-hero: var(--bw-gradient-hero);
+    --gradient-card: var(--bw-gradient-card);
+    --gradient-primary: var(--bw-gradient-primary);
+    --shadow-soft: var(--bw-shadow-soft);
+    --shadow-medium: var(--bw-shadow-medium);
+    --shadow-large: var(--bw-shadow-large);
   }
 }
 
@@ -132,6 +211,40 @@ All colors MUST be HSL.
 
 /* Apple-style component utilities */
 @layer components {
+  /* Consistent spacing and alignment utilities */
+  .section-padding {
+    @apply py-24 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-width {
+    @apply max-w-7xl mx-auto;
+  }
+  
+  .section-header {
+    @apply text-center mb-16;
+  }
+  
+  .section-title {
+    @apply text-4xl lg:text-5xl font-bold text-foreground mb-6;
+  }
+  
+  .section-subtitle {
+    @apply text-xl text-muted-foreground max-w-3xl mx-auto;
+  }
+  
+  /* Consistent grid layouts */
+  .grid-2 {
+    @apply grid md:grid-cols-2 gap-8;
+  }
+  
+  .grid-3 {
+    @apply grid md:grid-cols-2 lg:grid-cols-3 gap-8;
+  }
+  
+  .grid-4 {
+    @apply grid md:grid-cols-2 lg:grid-cols-4 gap-8;
+  }
+
   .hero-gradient {
     background: var(--gradient-hero);
   }
@@ -169,15 +282,37 @@ All colors MUST be HSL.
   }
 
   .product-card {
-    @apply bg-card border border-border rounded-3xl p-8 shadow-soft transition-smooth hover:shadow-medium hover:-translate-y-1;
+    @apply bg-card border border-border rounded-3xl p-8 shadow-soft transition-smooth hover:shadow-medium hover:-translate-y-2 hover:scale-[1.02];
   }
   
   .hero-button {
-    @apply bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold transition-smooth hover:shadow-medium hover:scale-105;
+    @apply bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold transition-smooth hover:shadow-medium hover:scale-105 active:scale-95;
   }
   
   .feature-icon {
-    @apply w-16 h-16 p-4 rounded-2xl bg-primary/10 text-primary transition-smooth hover:scale-110;
+    @apply w-16 h-16 p-4 rounded-2xl bg-primary/10 text-primary transition-smooth hover:scale-110 hover:bg-primary hover:text-primary-foreground;
+  }
+  
+  /* Consistent card styles */
+  .base-card {
+    @apply bg-card border border-border rounded-2xl p-6 shadow-soft transition-smooth;
+  }
+  
+  .interactive-card {
+    @apply base-card hover:shadow-medium hover:-translate-y-1 hover:scale-[1.01] cursor-pointer;
+  }
+  
+  /* Button variants */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold transition-smooth hover:shadow-medium hover:scale-105 active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground px-6 py-3 rounded-xl font-semibold border border-border transition-smooth hover:bg-accent hover:text-accent-foreground hover:scale-105 active:scale-95;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-primary text-primary px-6 py-3 rounded-xl font-semibold transition-smooth hover:bg-primary hover:text-primary-foreground hover:scale-105 active:scale-95;
   }
   
   /* Parallax and scroll animations */
@@ -200,11 +335,53 @@ All colors MUST be HSL.
   
   /* Enhanced hover effects */
   .card-hover {
-    @apply transition-all duration-500 ease-out;
+    @apply transition-all duration-300 ease-out;
   }
   
   .card-hover:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    @apply -translate-y-2 scale-[1.02] shadow-large;
+  }
+  
+  /* Theme toggle button */
+  .theme-toggle {
+    @apply fixed top-20 right-4 z-50 bg-card border border-border rounded-full p-3 shadow-medium transition-smooth hover:scale-110 hover:shadow-large;
+  }
+  
+  /* Consistent section backgrounds */
+  .section-alt {
+    @apply bg-muted/30;
+  }
+  
+  .section-primary {
+    @apply bg-primary text-primary-foreground;
+  }
+  
+  /* Typography consistency */
+  .heading-xl {
+    @apply text-5xl lg:text-7xl font-bold leading-tight;
+  }
+  
+  .heading-lg {
+    @apply text-4xl lg:text-5xl font-bold;
+  }
+  
+  .heading-md {
+    @apply text-2xl lg:text-3xl font-bold;
+  }
+  
+  .heading-sm {
+    @apply text-xl font-bold;
+  }
+  
+  .body-lg {
+    @apply text-xl leading-relaxed;
+  }
+  
+  .body-md {
+    @apply text-base leading-relaxed;
+  }
+  
+  .body-sm {
+    @apply text-sm leading-relaxed;
   }
 }

@@ -165,69 +165,66 @@ const ProductShowcase = () => {
   ];
 
   return (
-    <section id="produk" className="py-24 bg-muted/30 relative overflow-hidden">
+    <section id="produk" className="section-padding section-alt relative overflow-hidden">
       {/* Parallax Background */}
       <ParallaxSection speed={0.5} className="absolute inset-0">
         <div className="absolute top-16 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-16 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl"></div>
       </ParallaxSection>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container-width relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
+        <div className="section-header animate-fade-in">
+          <h2 className="section-title">
             Produk Kami
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="section-subtitle">
             Solusi terintegrasi untuk semua kebutuhan bisnis Anda. Dari Point of Sale hingga manajemen armada, 
             semua dalam satu platform.
           </p>
         </div>
 
         {/* Product Grid - Responsive 3 columns on large screens */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid-3">
           {products.map((product, index) => (
             <ParallaxSection
               key={product.id}
               speed={0.2 + (index * 0.05)}
-              className="product-card group animate-slide-up card-hover"
+              className="product-card group animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Product Header */}
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-4 mb-8">
                 <div className="relative">
                   <img 
                     src={product.logo} 
                     alt={`${product.name} Logo`}
-                    className="h-16 w-auto"
+                    className="h-16 w-auto transition-smooth group-hover:scale-110"
                   />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-foreground">{product.name}</h3>
-                  <p className="text-sm font-semibold text-primary">{product.subtitle}</p>
+                  <h3 className="heading-md text-foreground">{product.name}</h3>
+                  <p className="body-sm font-semibold text-primary">{product.subtitle}</p>
                 </div>
               </div>
 
               {/* Product Description */}
-              <p className="text-muted-foreground mb-6 leading-relaxed">
+              <p className="body-md text-muted-foreground mb-8">
                 {product.description}
               </p>
 
               {/* Features List */}
-              <div className="space-y-3 mb-8">
+              <div className="space-y-4 mb-10">
                 {product.features.map((feature, featureIndex) => (
                   <div key={featureIndex} className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
-                    <span className="text-sm text-foreground">{feature}</span>
+                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 transition-smooth group-hover:scale-150"></div>
+                    <span className="body-sm text-foreground">{feature}</span>
                   </div>
                 ))}
               </div>
 
               {/* CTA Button */}
-              <Button 
-                variant="outline" 
-                className="w-full group border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-smooth"
-              >
+              <Button className="btn-outline w-full group">
                 Pelajari Lebih Lanjut
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>

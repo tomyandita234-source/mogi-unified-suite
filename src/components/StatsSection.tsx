@@ -77,26 +77,26 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="py-24 bg-primary text-primary-foreground relative overflow-hidden">
+    <section className="section-padding section-primary relative overflow-hidden">
       {/* Parallax Background Elements */}
       <ParallaxSection speed={0.3} className="absolute inset-0">
         <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-white/3 rounded-full blur-3xl"></div>
       </ParallaxSection>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container-width relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+        <div className="section-header animate-fade-in">
+          <h2 className="section-title text-primary-foreground">
             Dipercaya Ribuan Bisnis
           </h2>
-          <p className="text-xl opacity-90 max-w-3xl mx-auto">
+          <p className="section-subtitle opacity-90 text-primary-foreground">
             Platform MogiApp telah membantu ribuan bisnis meningkatkan efisiensi dan produktivitas di seluruh Indonesia
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid-4">
           {stats.map((stat, index) => (
             <ParallaxSection 
               key={index} 
@@ -104,17 +104,17 @@ const StatsSection = () => {
               className="text-center animate-slide-up"
               style={{ animationDelay: `${index * 0.2}s` }}
             >
-              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-smooth">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 transition-smooth hover:bg-white/20 hover:scale-105 hover:-translate-y-2">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-8 transition-smooth hover:scale-110">
                   <stat.icon className="w-8 h-8" />
                 </div>
-                <div className="text-4xl lg:text-5xl font-bold mb-2">
+                <div className="text-4xl lg:text-5xl font-bold mb-4">
                   {stat.value}{stat.suffix}
                 </div>
-                <div className="text-xl font-semibold mb-2 opacity-90">
+                <div className="heading-sm mb-3 opacity-90">
                   {stat.label}
                 </div>
-                <div className="text-sm opacity-75">
+                <div className="body-sm opacity-75">
                   {stat.description}
                 </div>
               </div>

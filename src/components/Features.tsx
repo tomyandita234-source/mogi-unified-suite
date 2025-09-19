@@ -30,26 +30,26 @@ const Features = () => {
   ];
 
   return (
-    <section id="solusi" className="py-24 relative overflow-hidden">
+    <section id="solusi" className="section-padding relative overflow-hidden">
       {/* Parallax Background */}
       <ParallaxSection speed={0.6} className="absolute inset-0">
         <div className="absolute top-20 right-1/4 w-96 h-96 bg-primary/3 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-accent/5 rounded-full blur-3xl"></div>
       </ParallaxSection>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="container-width relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
+        <div className="section-header animate-fade-in">
+          <h2 className="section-title">
             Mengapa Memilih MogiApp?
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="section-subtitle">
             Platform terintegrasi dengan teknologi terdepan untuk mendukung efisiensi bisnis dan keamanan kendaraan Anda
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid-4">
           {features.map((feature, index) => (
             <ParallaxSection
               key={index}
@@ -58,18 +58,18 @@ const Features = () => {
               style={{ animationDelay: `${index * 0.15}s` }}
             >
               {/* Icon */}
-              <div className="feature-icon mx-auto mb-6 group-hover:bg-primary group-hover:text-primary-foreground">
+              <div className="feature-icon mx-auto mb-8">
                 <feature.icon className="w-8 h-8" />
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-bold text-foreground mb-3">
+              <h3 className="heading-sm text-foreground mb-4">
                 {feature.title}
               </h3>
-              <p className="text-muted-foreground mb-4 font-medium">
+              <p className="body-md text-muted-foreground mb-6 font-medium">
                 {feature.description}
               </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="body-sm text-muted-foreground">
                 {feature.details}
               </p>
             </ParallaxSection>

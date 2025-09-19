@@ -26,20 +26,20 @@ const Testimonials = () => {
   ];
 
   return (
-    <section id="testimoni" className="py-24 bg-muted/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="testimoni" className="section-padding section-alt">
+      <div className="container-width">
         {/* Section Header */}
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-6">
+        <div className="section-header animate-fade-in">
+          <h2 className="section-title">
             Testimoni Pelanggan
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="section-subtitle">
             Dengarkan pengalaman pelanggan yang telah merasakan manfaat Platform MogiApp
           </p>
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid-3">
           {testimonials.map((testimonial, index) => (
             <div 
               key={index} 
@@ -47,27 +47,27 @@ const Testimonials = () => {
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               {/* Quote Icon */}
-              <div className="mb-6">
-                <Quote className="h-8 w-8 text-primary opacity-50" />
+              <div className="mb-8">
+                <Quote className="h-8 w-8 text-primary opacity-50 transition-smooth group-hover:opacity-100 group-hover:scale-110" />
               </div>
 
               {/* Rating */}
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-1 mb-6">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-current text-yellow-400" />
+                  <Star key={i} className="h-5 w-5 fill-current text-yellow-400 transition-smooth hover:scale-125" />
                 ))}
               </div>
 
               {/* Content */}
-              <p className="text-foreground mb-6 leading-relaxed font-medium">
+              <p className="body-md text-foreground mb-8 font-medium">
                 "{testimonial.content}"
               </p>
 
               {/* Author */}
-              <div className="border-t border-border pt-6">
-                <div className="font-semibold text-foreground">{testimonial.name}</div>
-                <div className="text-sm text-primary font-medium">{testimonial.role}</div>
-                <div className="text-sm text-muted-foreground">{testimonial.company}</div>
+              <div className="border-t border-border pt-8">
+                <div className="heading-sm text-foreground">{testimonial.name}</div>
+                <div className="body-sm text-primary font-medium">{testimonial.role}</div>
+                <div className="body-sm text-muted-foreground">{testimonial.company}</div>
               </div>
             </div>
           ))}
