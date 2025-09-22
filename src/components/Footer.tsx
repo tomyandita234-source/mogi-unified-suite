@@ -30,7 +30,7 @@ const Footer = () => {
   const companyLinks = [
     { name: 'Tentang Kami', href: '#about' },
     { name: 'Karir', href: '#careers' },
-    { name: 'Blog', href: '#blog' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Press Kit', href: '#press' },
   ];
 

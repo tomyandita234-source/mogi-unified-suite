@@ -1,30 +1,7 @@
-import { ArrowRight, UserPlus, Settings, Zap, BarChart } from 'lucide-react';
-import { useEffect, useRef } from 'react';
 import ParallaxSection from './ParallaxSection';
+import { ArrowRight, UserPlus, Settings, Zap, BarChart } from 'lucide-react';
 
 const ProcessSection = () => {
-  const sectionRef = useRef(null);
-  
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-in');
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-    
-    const stepElements = document.querySelectorAll('.process-step');
-    stepElements.forEach((el) => observer.observe(el));
-    
-    return () => {
-      stepElements.forEach((el) => observer.unobserve(el));
-    };
-  }, []);
-
   const steps = [
     {
       icon: UserPlus,
@@ -53,7 +30,7 @@ const ProcessSection = () => {
   ];
 
   return (
-    <section className="section-padding section-alt relative overflow-hidden" ref={sectionRef}>
+    <section className="section-padding section-alt relative overflow-hidden">
       {/* Parallax Background Elements */}
       <ParallaxSection speed={0.4} className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-1/4 w-2 h-2 bg-primary rounded-full"></div>
@@ -84,7 +61,7 @@ const ProcessSection = () => {
               <ParallaxSection 
                 key={index} 
                 speed={0.1}
-                className="relative process-step animate-slide-up"
+                className="relative animate-slide-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="text-center group">

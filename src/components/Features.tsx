@@ -70,18 +70,6 @@ const Features = () => {
           </p>
         </div>
 
-        {/* CTA Buttons - Moved to top for visibility */}
-        <div className="mb-16 text-center opacity-0 animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-          <div className="flex flex-col sm:flex-row gap-8 justify-center">
-            <button className="bg-primary text-white hover:bg-primary/90 rounded-full text-lg px-10 py-4 font-medium transition-all duration-300 relative z-10 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:translate-y-[-4px]">
-              Mulai Gratis Sekarang
-            </button>
-            <button className="bg-white text-primary hover:bg-primary/10 border border-primary/20 rounded-full text-lg px-10 py-4 font-medium transition-all duration-300 relative z-10 shadow-lg hover:shadow-xl hover:translate-y-[-4px]">
-              Jadwalkan Demo
-            </button>
-          </div>
-        </div>
-
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
           {features.map((feature, index) => (
@@ -109,16 +97,24 @@ const Features = () => {
           ))}
         </div>
         
-        {/* Bottom CTA Section */}
-        <div className="mt-20 text-center opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-          <a href="#contact" className="inline-flex items-center gap-2 text-primary font-medium text-lg hover:text-primary/80 transition-colors duration-300 group mt-4">
-            Pelajari lebih lanjut
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
-              <path d="M5 12h14"></path>
-              <path d="m12 5 7 7-7 7"></path>
-            </svg>
-          </a>
-        </div>
+        {/* CTA Section */}
+         <div className="mt-20 text-center opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
+           <div className="flex flex-col sm:flex-row gap-8 justify-center mb-8">
+             <button className="bg-primary text-white hover:bg-primary/90 rounded-full text-lg px-10 py-4 font-medium transition-all duration-300 relative z-10 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:translate-y-[-4px]">
+               Mulai Gratis Sekarang
+             </button>
+             <button className="bg-white text-primary hover:bg-primary/10 border border-primary/20 rounded-full text-lg px-10 py-4 font-medium transition-all duration-300 relative z-10 shadow-lg hover:shadow-xl hover:translate-y-[-4px]">
+               Jadwalkan Demo
+             </button>
+           </div>
+           <a href="#contact" className="inline-flex items-center gap-2 text-primary font-medium text-lg hover:text-primary/80 transition-colors duration-300 group mt-4">
+             Pelajari lebih lanjut
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
+               <path d="M5 12h14"></path>
+               <path d="m12 5 7 7-7 7"></path>
+             </svg>
+           </a>
+         </div>
       </div>
     </section>
   );

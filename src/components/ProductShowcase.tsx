@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import ParallaxSection from './ParallaxSection';
 import { ArrowRight, ShoppingCart, Settings, Truck, FileSignature, CreditCard, BookOpen, GraduationCap, Activity, Camera } from 'lucide-react';
 import mogiPosLogo from '@/assets/mogi-pos-logo.png';
 import mogiOpsLogo from '@/assets/mogi-ops-logo.png';
@@ -166,11 +165,11 @@ const ProductShowcase = () => {
 
   return (
     <section id="produk" className="section-padding section-alt relative overflow-hidden">
-      {/* Parallax Background */}
-      <ParallaxSection speed={0.5} className="absolute inset-0">
+      {/* Background Elements */}
+      <div className="absolute inset-0">
         <div className="absolute top-16 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-16 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl"></div>
-      </ParallaxSection>
+      </div>
 
       <div className="container-width relative z-10">
         {/* Section Header */}
@@ -222,8 +221,8 @@ const ProductShowcase = () => {
                 ))}
               </div>
 
-              {/* CTA Button - Apple style */}
-              <Button className="bg-white/10 hover:bg-white/20 text-white border-none rounded-full px-6 py-2 mt-4 w-full group transition-all duration-300">
+              {/* CTA Button */}
+              <Button className="btn-outline w-full group">
                 Pelajari Lebih Lanjut
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
