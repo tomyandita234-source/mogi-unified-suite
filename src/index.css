@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 /* Apple-inspired MogiApp Design System. All colors, gradients, fonts, etc defined here. 
 All colors MUST be HSL.
@@ -19,17 +19,17 @@ All colors MUST be HSL.
     --popover-foreground: 220 14% 11%;
 
     /* MogiApp Brand Colors */
-    --primary: 195 91% 48%;        /* Teal blue from logos */
+    --primary: 196 100% 47%;        /* Teal Blue */
     --primary-foreground: 0 0% 100%;
     --primary-light: 195 91% 65%;
     
-    --secondary: 220 14% 95%;      /* Light gray */
+    --secondary: 220 14% 90%;      /* Light gray */
     --secondary-foreground: 220 14% 11%;
 
-    --muted: 220 14% 95%;
+    --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
 
-    --accent: 24 95% 53%;          /* Orange accent */
+    --accent: 32 100% 50%;          /* Orange */
     --accent-foreground: 0 0% 100%;
 
     /* Supporting colors */
@@ -42,12 +42,12 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    --border: 220 14% 90%;
+    --input: 220 14% 90%;
     --ring: 195 91% 48%;
-
+    
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-primary: linear-gradient(145deg, hsl(196 100% 47%), hsl(196 100% 37%));
     --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 14% 98%));
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.8), hsl(220 14% 98% / 0.6));
     
@@ -63,22 +63,15 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Fresh Black & White Theme Variables */
+    /* Black & White Theme Variables */
     --bw-background: 0 0% 100%;
     --bw-foreground: 0 0% 0%;
     --bw-card: 0 0% 98%;
@@ -107,37 +100,61 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 220 14% 6%;
-    --foreground: 220 14% 95%;
+    /* Dark Mode Colors */
+    --background: 222 84% 5%;
+    --foreground: 210 40% 98%;
 
-    --card: 220 14% 8%;
-    --card-foreground: 220 14% 95%;
+    --card: 222 84% 5%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 220 14% 8%;
-    --popover-foreground: 220 14% 95%;
+    --popover: 222 84% 5%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 195 91% 48%;
+    /* MogiApp Brand Colors - Dark Mode */
+    --primary: 196 100% 47%;        /* Keep brand teal */
     --primary-foreground: 0 0% 100%;
+    --primary-light: 195 91% 65%;
+    
+    --secondary: 217 32% 17%;       /* Dark gray */
+    --secondary-foreground: 210 40% 98%;
 
-    --secondary: 220 14% 12%;
-    --secondary-foreground: 220 14% 95%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --muted: 220 14% 12%;
-    --muted-foreground: 220 9% 65%;
-
-    --accent: 24 95% 53%;
+    --accent: 32 100% 50%;          /* Keep brand orange */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    /* Supporting colors - Dark Mode */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 14% 15%;
-    --input: 220 14% 15%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
     --ring: 195 91% 48%;
     
-    /* Dark mode gradients */
-    --gradient-hero: linear-gradient(180deg, hsl(220 14% 6%), hsl(220 14% 8%));
-    --gradient-card: linear-gradient(145deg, hsl(220 14% 8% / 0.8), hsl(220 14% 10% / 0.6));
+    /* Dark Mode Gradients */
+    --gradient-hero: linear-gradient(180deg, hsl(222 84% 5%), hsl(217 32% 8%));
+    --gradient-card: linear-gradient(145deg, hsl(222 84% 5% / 0.8), hsl(217 32% 8% / 0.6));
+    
+    /* Dark Mode Shadows */
+    --shadow-soft: 0 4px 32px -4px hsl(0 0% 0% / 0.3);
+    --shadow-medium: 0 8px 64px -8px hsl(0 0% 0% / 0.4);
+    --shadow-large: 0 16px 128px -16px hsl(0 0% 0% / 0.5);
+
+    --sidebar-background: 222 84% 5%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 222 84% 5%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 17%;
+    --sidebar-ring: 195 91% 48%;
 
     /* Dark Black & White Theme */
     --bw-background: 0 0% 8%;
@@ -191,11 +208,9 @@ All colors MUST be HSL.
     --shadow-medium: var(--bw-shadow-medium);
     --shadow-large: var(--bw-shadow-large);
   }
-}
 
-@layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   html {
@@ -204,7 +219,11 @@ All colors MUST be HSL.
   }
   
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
 }
@@ -213,36 +232,104 @@ All colors MUST be HSL.
 @layer components {
   /* Consistent spacing and alignment utilities */
   .section-padding {
-    @apply py-24 px-4 sm:px-6 lg:px-8;
+    padding: 6rem 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .section-padding {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-padding {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
   
   .container-width {
-    @apply max-w-7xl mx-auto;
+    max-width: 80rem; /* 7xl = 80rem */
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .section-header {
-    @apply text-center mb-16;
+    text-align: center;
+    margin-bottom: 4rem;
   }
   
   .section-title {
-    @apply text-4xl lg:text-5xl font-bold text-foreground mb-6;
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+    margin-bottom: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .section-title {
+      font-size: 3rem;
+      line-height: 1;
+    }
   }
   
   .section-subtitle {
-    @apply text-xl text-muted-foreground max-w-3xl mx-auto;
+    font-size: 1.25rem;
+    color: hsl(var(--muted-foreground));
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   /* Consistent grid layouts */
   .grid-2 {
-    @apply grid md:grid-cols-2 gap-8;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
   
   .grid-3 {
-    @apply grid md:grid-cols-2 lg:grid-cols-3 gap-8;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  @media (min-width: 768px) {
+    .grid-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
   
   .grid-4 {
-    @apply grid md:grid-cols-2 lg:grid-cols-4 gap-8;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 
   .hero-gradient {
@@ -262,19 +349,15 @@ All colors MUST be HSL.
   }
   
   .shadow-soft {
-    box-shadow: var(--shadow-soft);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
   
   .shadow-medium {
-    box-shadow: var(--shadow-medium);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   }
   
   .shadow-large {
-    box-shadow: var(--shadow-large);
-  }
-  
-  .transition-smooth {
-    transition: var(--transition-smooth);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
   }
   
   .transition-bounce {
@@ -282,37 +365,84 @@ All colors MUST be HSL.
   }
 
   .product-card {
-    @apply bg-card border border-border rounded-3xl p-8 shadow-soft transition-smooth hover:shadow-medium hover:-translate-y-2 hover:scale-[1.02];
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: var(--shadow-soft);
   }
   
   .hero-button {
-    @apply bg-primary text-primary-foreground px-8 py-4 rounded-full font-semibold transition-smooth hover:shadow-medium hover:scale-105 active:scale-95;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 2rem 1rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition: var(--transition-smooth);
   }
   
   .feature-icon {
-    @apply w-16 h-16 p-4 rounded-2xl bg-primary/10 text-primary transition-smooth hover:scale-110 hover:bg-primary hover:text-primary-foreground;
+    width: 4rem;
+    height: 4rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
   }
   
   /* Consistent card styles */
   .base-card {
-    @apply bg-card border border-border rounded-2xl p-6 shadow-soft transition-smooth;
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
   }
   
   .interactive-card {
-    @apply base-card hover:shadow-medium hover:-translate-y-1 hover:scale-[1.01] cursor-pointer;
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
   }
   
   /* Button variants */
   .btn-primary {
-    @apply bg-primary text-primary-foreground px-6 py-3 rounded-xl font-semibold transition-smooth hover:shadow-medium hover:scale-105 active:scale-95;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
   }
   
   .btn-secondary {
-    @apply bg-secondary text-secondary-foreground px-6 py-3 rounded-xl font-semibold border border-border transition-smooth hover:bg-accent hover:text-accent-foreground hover:scale-105 active:scale-95;
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    padding: 1.5rem 0.75rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    border: 1px solid hsl(var(--border));
+    transition: var(--transition-smooth);
+  }
+
+  .btn-secondary:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    transform: scale(1.05);
+  }
+
+  .btn-secondary:active {
+    transform: scale(0.95);
   }
   
   .btn-outline {
-    @apply border-2 border-primary text-primary px-6 py-3 rounded-xl font-semibold transition-smooth hover:bg-primary hover:text-primary-foreground hover:scale-105 active:scale-95;
+    border: 2px solid hsl(var(--primary));
+    color: hsl(var(--primary));
+    padding: 1.5rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
   }
   
   /* Parallax and scroll animations */
@@ -335,53 +465,91 @@ All colors MUST be HSL.
   
   /* Enhanced hover effects */
   .card-hover {
-    @apply transition-all duration-300 ease-out;
+    transition: all 300ms ease-out;
   }
   
   .card-hover:hover {
-    @apply -translate-y-2 scale-[1.02] shadow-large;
+    transform: translateY(-0.5rem) scale(1.02);
+    box-shadow: var(--shadow-large);
   }
   
   /* Theme toggle button */
   .theme-toggle {
-    @apply fixed top-20 right-4 z-50 bg-card border border-border rounded-full p-3 shadow-medium transition-smooth hover:scale-110 hover:shadow-large;
+    position: fixed;
+    top: 5rem; /* 20 units = 5rem */
+    right: 1rem; /* 4 units = 1rem */
+    z-index: 50;
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 9999px; /* rounded-full */
+    padding: 0.75rem; /* p-3 = 0.75rem */
+    box-shadow: var(--shadow-medium);
   }
   
   /* Consistent section backgrounds */
   .section-alt {
-    @apply bg-muted/30;
+    background-color: hsl(var(--muted) / 0.3);
   }
   
   .section-primary {
-    @apply bg-primary text-primary-foreground;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
   }
   
   /* Typography consistency */
   .heading-xl {
-    @apply text-5xl lg:text-7xl font-bold leading-tight;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  @media (min-width: 1024px) {
+    .heading-xl {
+      font-size: 4.5rem;
+    }
   }
   
   .heading-lg {
-    @apply text-4xl lg:text-5xl font-bold;
+    font-size: 2.25rem;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 1024px) {
+    .heading-lg {
+      font-size: 3rem;
+    }
   }
   
   .heading-md {
-    @apply text-2xl lg:text-3xl font-bold;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 1024px) {
+    .heading-md {
+      font-size: 1.875rem;
+    }
   }
   
   .heading-sm {
-    @apply text-xl font-bold;
+    font-size: 1.25rem;
+    font-weight: 700;
   }
   
   .body-lg {
-    @apply text-xl leading-relaxed;
+    font-size: 1.25rem;
+    line-height: 1.75;
   }
   
   .body-md {
-    @apply text-base leading-relaxed;
+    font-size: 1rem;
+    line-height: 1.625;
   }
   
   .body-sm {
-    @apply text-sm leading-relaxed;
+    font-size: 0.875rem;
+    line-height: 1.625;
   }
 }

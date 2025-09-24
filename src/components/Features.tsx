@@ -52,20 +52,20 @@ const Features = () => {
   ];
 
   return (
-    <section id="solusi" className="py-24 md:py-32 relative overflow-hidden" ref={sectionRef}>
+    <section id="solusi" className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" ref={sectionRef}>
       {/* Modern Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '15s' }}></div>
         <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '20s', animationDelay: '2s' }}></div>
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container-width relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16 opacity-0 animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
+        <div className="section-header opacity-0 animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+          <h2 className="section-title">
             Mengapa Memilih <span className="text-primary">MogiApp</span>?
           </h2>
-          <p className="text-xl md:text-2xl text-foreground/80 max-w-3xl mx-auto font-medium leading-relaxed">
+          <p className="section-subtitle">
             Platform terintegrasi dengan teknologi terdepan untuk mendukung efisiensi bisnis dan keamanan kendaraan Anda
           </p>
         </div>
@@ -98,23 +98,23 @@ const Features = () => {
         </div>
         
         {/* CTA Section */}
-         <div className="mt-20 text-center opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-           <div className="flex flex-col sm:flex-row gap-8 justify-center mb-8">
-             <button className="bg-primary text-white hover:bg-primary/90 rounded-full text-lg px-10 py-4 font-medium transition-all duration-300 relative z-10 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:translate-y-[-4px]">
-               Mulai Gratis Sekarang
-             </button>
-             <button className="bg-white text-primary hover:bg-primary/10 border border-primary/20 rounded-full text-lg px-10 py-4 font-medium transition-all duration-300 relative z-10 shadow-lg hover:shadow-xl hover:translate-y-[-4px]">
-               Jadwalkan Demo
-             </button>
-           </div>
-           <a href="#contact" className="inline-flex items-center gap-2 text-primary font-medium text-lg hover:text-primary/80 transition-colors duration-300 group mt-4">
-             Pelajari lebih lanjut
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
-               <path d="M5 12h14"></path>
-               <path d="m12 5 7 7-7 7"></path>
-             </svg>
-           </a>
-         </div>
+        <div className="mt-16 text-center opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-6">
+            <button className="btn-primary text-lg px-10 py-4">
+              Mulai Gratis Sekarang
+            </button>
+            <button className="btn-outline text-lg px-10 py-4">
+              Jadwalkan Demo
+            </button>
+          </div>
+          <a href="#contact" className="inline-flex items-center gap-2 text-primary font-medium text-base hover:text-primary/80 transition-colors duration-300 group">
+            Pelajari lebih lanjut
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
       </div>
     </section>
   );

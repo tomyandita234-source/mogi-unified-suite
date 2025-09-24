@@ -26,7 +26,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <section id="testimoni" className="section-padding section-alt">
+    <section id="testimoni" className="py-20 px-4 sm:px-6 lg:px-8 section-alt">
       <div className="container-width">
         {/* Section Header */}
         <div className="section-header animate-fade-in">

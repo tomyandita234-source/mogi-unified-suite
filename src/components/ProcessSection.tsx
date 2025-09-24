@@ -30,7 +30,7 @@ const ProcessSection = () => {
   ];
 
   return (
-    <section className="section-padding section-alt relative overflow-hidden">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 section-alt relative overflow-hidden">
       {/* Parallax Background Elements */}
       <ParallaxSection speed={0.4} className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-1/4 w-2 h-2 bg-primary rounded-full"></div>
@@ -99,21 +99,21 @@ const ProcessSection = () => {
         </div>
 
         {/* CTA Section */}
-        <ParallaxSection speed={0.2} className="text-center mt-20">
-          <div className="base-card p-12 transition-smooth hover:shadow-medium hover:scale-[1.02]">
-            <h3 className="heading-lg text-foreground mb-6">
+        <ParallaxSection speed={0.2} className="text-center mt-16">
+          <div className="base-card p-8 transition-smooth hover:shadow-medium hover:scale-[1.02]">
+            <h3 className="heading-lg text-foreground mb-4">
               Siap Untuk Memulai?
             </h3>
-            <p className="body-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+            <p className="body-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
               Bergabunglah dengan ribuan bisnis yang telah merasakan efisiensi Platform MogiApp. 
               Mulai gratis hari ini tanpa komitmen jangka panjang.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="btn-primary group text-lg px-10 py-4 relative z-10">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="btn-primary group text-lg px-8 py-3">
                 Mulai Gratis Sekarang
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </button>
-              <button className="bg-white text-primary hover:bg-primary/10 border border-primary/20 rounded-full text-lg px-10 py-4 font-medium transition-all duration-300 relative z-10">
+              <button className="btn-outline text-lg px-8 py-3">
                 Jadwalkan Demo
               </button>
             </div>

@@ -1,30 +1,20 @@
 import { useState } from 'react';
-import { Menu, X, Palette } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ThemeToggle from './ThemeToggle';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [theme, setTheme] = useState('default');
 
   const navigation = [
     { name: 'App', href: '#app' },
     { name: 'Produk', href: '#produk' },
     { name: 'Solusi', href: '#solusi' },
     { name: 'Harga', href: '#harga' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Dukungan', href: '#dukungan' },
     { name: 'Tentang', href: '#tentang' },
   ];
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'default' ? 'bw' : 'default';
-    setTheme(newTheme);
-    
-    if (newTheme === 'bw') {
-      document.documentElement.classList.add('theme-bw');
-    } else {
-      document.documentElement.classList.remove('theme-bw');
-    }
-  };
 
   return (
     <>
@@ -52,14 +42,7 @@ const Header = () => {
 
           {/* CTA Button & Theme Toggle */}
           <div className="hidden md:flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleTheme}
-              className="p-2 hover:bg-accent hover:text-accent-foreground transition-smooth"
-            >
-              <Palette className="h-5 w-5" />
-            </Button>
+            <ThemeToggle />
             <Button className="btn-primary">
               Mulai Gratis
             </Button>
@@ -93,14 +76,7 @@ const Header = () => {
                 </a>
               ))}
               <div className="pt-4 flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleTheme}
-                  className="p-3"
-                >
-                  <Palette className="h-5 w-5" />
-                </Button>
+                <ThemeToggle />
                 <Button className="btn-primary flex-1">
                   Mulai Gratis
                 </Button>

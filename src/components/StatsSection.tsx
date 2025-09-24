@@ -77,7 +77,7 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="section-padding section-primary relative overflow-hidden">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 section-primary relative overflow-hidden">
       {/* Parallax Background Elements */}
       <ParallaxSection speed={0.3} className="absolute inset-0">
         <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>

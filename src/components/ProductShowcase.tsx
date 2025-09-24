@@ -164,7 +164,7 @@ const ProductShowcase = () => {
   ];
 
   return (
-    <section id="produk" className="section-padding section-alt relative overflow-hidden">
+    <section id="produk" className="py-20 px-4 sm:px-6 lg:px-8 section-alt relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-16 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>

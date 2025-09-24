@@ -48,9 +48,9 @@ app.locals.upload = upload;
 // Connect to MongoDB
 mongoose.connect(config.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 })
-.then(() => console.log('MongoDB connected'))
+.then(() => console.log('MongoDB connected successfully'))
 .catch(err => console.error('MongoDB connection error:', err));
 
 // API Routes
