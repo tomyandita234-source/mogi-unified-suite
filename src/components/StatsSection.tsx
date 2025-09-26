@@ -1,124 +1,77 @@
-import { useEffect, useState } from 'react';
-import ParallaxSection from './ParallaxSection';
-import { Users, Building2, MapPin, TrendingUp } from 'lucide-react';
+import { TrendingUp, Users, Building, Award } from 'lucide-react';
 
 const StatsSection = () => {
-  const [counters, setCounters] = useState({
-    customers: 0,
-    businesses: 0,
-    cities: 0,
-    growth: 0
-  });
-
-  const finalStats = {
-    customers: 10000,
-    businesses: 2500,
-    cities: 150,
-    growth: 300
-  };
-
-  useEffect(() => {
-    const duration = 2000; // 2 seconds
-    const steps = 60;
-    const increment = {
-      customers: finalStats.customers / steps,
-      businesses: finalStats.businesses / steps,
-      cities: finalStats.cities / steps,
-      growth: finalStats.growth / steps
-    };
-
-    let currentStep = 0;
-    const timer = setInterval(() => {
-      if (currentStep < steps) {
-        setCounters(prev => ({
-          customers: Math.min(Math.floor(prev.customers + increment.customers), finalStats.customers),
-          businesses: Math.min(Math.floor(prev.businesses + increment.businesses), finalStats.businesses),
-          cities: Math.min(Math.floor(prev.cities + increment.cities), finalStats.cities),
-          growth: Math.min(Math.floor(prev.growth + increment.growth), finalStats.growth)
-        }));
-        currentStep++;
-      } else {
-        clearInterval(timer);
-      }
-    }, duration / steps);
-
-    return () => clearInterval(timer);
-  }, []);
-
   const stats = [
     {
-      icon: Users,
-      value: counters.customers.toLocaleString(),
-      suffix: '+',
-      label: 'Pelanggan Aktif',
-      description: 'Bisnis yang mempercayai platform kami'
-    },
-    {
-      icon: Building2,
-      value: counters.businesses.toLocaleString(),
-      suffix: '+',
-      label: 'Perusahaan',
-      description: 'Dari startup hingga enterprise'
-    },
-    {
-      icon: MapPin,
-      value: counters.cities.toLocaleString(),
-      suffix: '+',
-      label: 'Kota',
-      description: 'Jangkauan di seluruh Indonesia'
-    },
-    {
       icon: TrendingUp,
-      value: counters.growth.toLocaleString(),
-      suffix: '%',
+      number: '9,960+',
+      label: 'Pelanggan Aktif',
+      description: 'Dari berbagai sektor bisnis'
+    },
+    {
+      icon: Users,
+      number: '2,460+',
+      label: 'Perusahaan',
+      description: 'Telah mempercayai kami'
+    },
+    {
+      icon: Building,
+      number: '120+',
+      label: 'Kota',
+      description: 'Di seluruh Indonesia'
+    },
+    {
+      icon: Award,
+      number: '300%',
       label: 'Pertumbuhan',
-      description: 'Peningkatan efisiensi rata-rata'
+      description: 'Peningkatan efisiensi'
     }
   ];
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 section-primary relative overflow-hidden">
-      {/* Parallax Background Elements */}
-      <ParallaxSection speed={0.3} className="absolute inset-0">
+      {/* Background Elements */}
+      <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-white/3 rounded-full blur-3xl"></div>
-      </ParallaxSection>
+      </div>
 
       <div className="container-width relative z-10">
         {/* Section Header */}
-        <div className="section-header animate-fade-in">
-          <h2 className="section-title text-primary-foreground">
+        <div className="section-header">
+          <h2 className="section-title text-white">
             Dipercaya Ribuan Bisnis
           </h2>
-          <p className="section-subtitle opacity-90 text-primary-foreground">
-            Platform MogiApp telah membantu ribuan bisnis meningkatkan efisiensi dan produktivitas di seluruh Indonesia
+          <p className="section-subtitle text-white/80">
+            Bergabunglah dengan ribuan perusahaan yang telah merasakan manfaat platform MogiApp
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
           {stats.map((stat, index) => (
-            <ParallaxSection 
-              key={index} 
-              speed={0.2 + (index * 0.1)}
-              className="text-center animate-slide-up"
-              style={{ animationDelay: `${index * 0.2}s` }}
+            <div
+              key={index}
+              className="text-center"
             >
-              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 transition-smooth hover:bg-white/20 hover:scale-105 hover:-translate-y-2">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-8 transition-smooth hover:scale-110">
-                  <stat.icon className="w-8 h-8" />
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-8">
+                  <stat.icon className="w-8 h-8 text-white" />
                 </div>
-                <div className="text-4xl lg:text-5xl font-bold mb-4">
-                  {stat.value}{stat.suffix}
+                
+                <div className="text-4xl font-bold text-white mb-2">
+                  {stat.number}
                 </div>
-                <div className="heading-sm mb-3 opacity-90">
+                
+                <div className="text-xl font-semibold text-white mb-2">
                   {stat.label}
                 </div>
-                <div className="body-sm opacity-75">
+                
+                <p className="text-white/70 text-sm">
                   {stat.description}
-                </div>
+                </p>
               </div>
-            </ParallaxSection>
+            </div>
           ))}
         </div>
       </div>

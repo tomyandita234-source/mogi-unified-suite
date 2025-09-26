@@ -173,7 +173,7 @@ const ProductShowcase = () => {
 
       <div className="container-width relative z-10">
         {/* Section Header */}
-        <div className="section-header animate-fade-in">
+        <div className="section-header">
           <h2 className="section-title">
             Produk Kami
           </h2>
@@ -187,10 +187,9 @@ const ProductShowcase = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-16">
           {products.map((product, index) => (
             <div
-              key={product.id}
-              className="product-card group animate-fade-in bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 border border-white/10"
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
+                key={product.id}
+                className="product-card group bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-lg hover:shadow-xl border border-white/10"
+              >
               {/* Product Header */}
               <div className="flex items-center gap-4 mb-8">
                 <div className="relative">
@@ -215,7 +214,7 @@ const ProductShowcase = () => {
               <div className="space-y-4 mb-10">
                 {product.features.map((feature, featureIndex) => (
                   <div key={featureIndex} className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 transition-smooth group-hover:scale-150"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
                     <span className="body-sm text-foreground">{feature}</span>
                   </div>
                 ))}
@@ -224,7 +223,7 @@ const ProductShowcase = () => {
               {/* CTA Button */}
               <Button className="btn-outline w-full group">
                 Pelajari Lebih Lanjut
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           ))}

@@ -5,67 +5,73 @@ import { BlogAPI, Blog } from '@/lib/api';
 
 const BlogSection = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const data = await BlogAPI.getAll();
-        setBlogs(data.slice(0, 3)); // Hanya ambil 3 blog terbaru
-        setLoading(false);
+        setBlogs(data);
       } catch (err) {
-        setError('Terjadi kesalahan saat mengambil data blog');
+        console.error('Error fetching blogs:', err);
+        setError('Gagal memuat artikel blog');
+      } finally {
         setLoading(false);
-        console.error(err);
       }
     };
 
     fetchBlogs();
   }, []);
 
-  // Fungsi untuk memotong teks body
+  const handleImageError = (blogId: string) => {
+    setImageErrors(prev => new Set(prev).add(blogId));
+  };
+
+  const handleImageLoad = (blogId: string) => {
+    setImageErrors(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(blogId);
+      return newSet;
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substr(0, maxLength) + '...';
   };
 
-  // Format tanggal
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    };
-    return new Date(dateString).toLocaleDateString('id-ID', options);
-  };
-
   return (
-    <section id="blog" className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-16 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-16 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="container-width relative z-10">
+    <section id="blog" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <div className="container-width">
         {/* Section Header */}
         <div className="section-header">
           <h2 className="section-title">
-            Blog & Artikel Terbaru
+            Artikel & Insights Terbaru
           </h2>
           <p className="section-subtitle">
-            Temukan informasi terbaru seputar teknologi, bisnis, dan tips untuk mengembangkan usaha Anda.
+            Dapatkan tips, tren industri, dan panduan praktis untuk mengoptimalkan bisnis Anda
           </p>
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="text-lg">Memuat artikel...</div>
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : error ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="text-lg text-red-500">{error}</div>
+          <div className="text-center py-20">
+            <p className="text-muted-foreground">{error}</p>
           </div>
         ) : (
           <>
@@ -74,12 +80,33 @@ const BlogSection = () => {
               {blogs.map((blog) => (
                 <div key={blog._id} className="base-card overflow-hidden">
                   {/* Blog Image */}
-                  <div className="h-48 overflow-hidden">
-                    <img 
-                      src={blog.image || '/placeholder.svg'} 
-                      alt={blog.title} 
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="h-48 overflow-hidden bg-muted/50 relative">
+                    {!imageErrors.has(blog._id) && blog.image ? (
+                      <img 
+                        src={blog.image} 
+                        alt={blog.title} 
+                        className="w-full h-full object-cover transition-opacity duration-300"
+                        onError={() => handleImageError(blog._id)}
+                        onLoad={() => handleImageLoad(blog._id)}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                        <svg 
+                          className="w-16 h-16 text-muted-foreground/50" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={1.5} 
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                          />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                   
                   {/* Blog Content */}

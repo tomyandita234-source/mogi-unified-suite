@@ -29,7 +29,7 @@ const Testimonials = () => {
     <section id="testimoni" className="py-20 px-4 sm:px-6 lg:px-8 section-alt">
       <div className="container-width">
         {/* Section Header */}
-        <div className="section-header animate-fade-in">
+        <div className="section-header">
           <h2 className="section-title">
             Testimoni Pelanggan
           </h2>
@@ -43,18 +43,17 @@ const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <div 
               key={index} 
-              className="product-card group animate-slide-up"
-              style={{ animationDelay: `${index * 0.2}s` }}
+              className="product-card group"
             >
               {/* Quote Icon */}
               <div className="mb-8">
-                <Quote className="h-8 w-8 text-primary opacity-50 transition-smooth group-hover:opacity-100 group-hover:scale-110" />
+                <Quote className="h-8 w-8 text-primary opacity-50" />
               </div>
 
               {/* Rating */}
               <div className="flex gap-1 mb-6">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-current text-yellow-400 transition-smooth hover:scale-125" />
+                  <Star key={i} className="h-5 w-5 fill-current text-yellow-400" />
                 ))}
               </div>
 
