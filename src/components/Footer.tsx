@@ -59,19 +59,26 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-3 body-sm transition-smooth hover:text-primary">
                 <Phone className="h-4 w-4 text-primary" />
-                <span className="text-foreground font-medium">0800-1234-5678</span>
+                <span className="text-foreground font-medium">0811-2288-8001</span>
               </div>
               <div className="flex items-center gap-3 body-sm transition-smooth hover:text-primary">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="text-foreground font-medium">info@mogiapp.id</span>
+                <span className="text-foreground font-medium">info@morfotech.id</span>
               </div>
               <div className="flex items-center gap-3 body-sm transition-smooth hover:text-primary">
                 <MessageCircle className="h-4 w-4 text-primary" />
-                <span className="text-foreground font-medium">+62 812-3456-7890</span>
+                <a 
+                  href="https://wa.me/6281122888001" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-foreground font-medium hover:text-primary"
+                >
+                  0811-2288-8001
+                </a>
               </div>
               <div className="flex items-center gap-3 body-sm transition-smooth hover:text-primary">
                 <Globe className="h-4 w-4 text-primary" />
-                <span className="text-foreground font-medium">mogiapp.id</span>
+                <span className="text-foreground font-medium">morfotech.id</span>
               </div>
             </div>
           </div>
@@ -137,11 +144,19 @@ const Footer = () => {
         <div className="border-t border-border pt-12 mb-12">
           <h3 className="heading-sm text-foreground mb-6">Kantor Pusat</h3>
           <div className="body-sm text-muted-foreground">
-            <p className="font-semibold text-foreground mb-3">Tendean Square</p>
-            <p>Jl. Wolter Monginsidi No. 122-124</p>
-            <p>RT 16 RW 02 Kavling No. 20-21 Lantai 3</p>
-            <p>Kec. Kebayoran Baru, Kel. Petogogan</p>
-            <p>Jakarta Selatan 12170</p>
+            <p className="font-semibold text-foreground mb-3">PT. Morfogenesis Teknologi Indonesia | Morfotech</p>
+            <p>Tendean Square</p>
+            <p>Jl. Wolter Monginsidi No 122-124, Kavling No.20 21</p>
+            <p>RT.16/RW.2, Petogogan, Kec. Kby. Baru</p>
+            <p>Daerah Khusus Ibukota Jakarta 12170</p>
+            <a 
+              href="https://maps.app.goo.gl/33dV6pcyC2WpuaRz7" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block mt-3 text-primary hover:text-primary/80 transition-smooth font-medium"
+            >
+              Lihat di Google Maps →
+            </a>
           </div>
         </div>
 

@@ -156,8 +156,15 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-medium">Telepon</h4>
-                  <p className="text-muted-foreground mt-1">+62 812 3456 7890</p>
-                  <p className="text-muted-foreground">+62 21 1234 5678</p>
+                  <p className="text-muted-foreground mt-1">0811-2288-8001</p>
+                  <a 
+                    href="https://wa.me/6281122888001" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:text-primary/80 transition-smooth"
+                  >
+                    WhatsApp: 0811-2288-8001
+                  </a>
                 </div>
               </div>
               
@@ -167,8 +174,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-medium">Email</h4>
-                  <p className="text-muted-foreground mt-1">info@mogiapp.com</p>
-                  <p className="text-muted-foreground">support@mogiapp.com</p>
+                  <p className="text-muted-foreground mt-1">info@morfotech.id</p>
                 </div>
               </div>
               
@@ -179,9 +185,11 @@ const ContactSection = () => {
                 <div>
                   <h4 className="font-medium">Alamat</h4>
                   <p className="text-muted-foreground mt-1">
-                    Jl. Teknologi Baru No. 123<br />
-                    Kota Jakarta Selatan, 12345<br />
-                    Indonesia
+                    <strong>PT. Morfogenesis Teknologi Indonesia | Morfotech</strong><br />
+                    Tendean Square<br />
+                    Jl. Wolter Monginsidi No 122-124, Kavling No.20 21<br />
+                    RT.16/RW.2, Petogogan, Kec. Kby. Baru<br />
+                    Daerah Khusus Ibukota Jakarta 12170
                   </p>
                 </div>
               </div>
@@ -190,13 +198,13 @@ const ContactSection = () => {
             {/* Google Maps Embed */}
             <div className="mt-8 h-64 rounded-xl overflow-hidden border border-border">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126748.56347862248!2d106.68942551553938!3d-6.229386695265757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e34b9d%3A0x5371bf0fdad786a2!2sJakarta%20Selatan%2C%20Kota%20Jakarta%20Selatan%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1623456789012!5m2!1sid!2sid" 
+                src="https://maps.app.goo.gl/33dV6pcyC2WpuaRz7" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
                 allowFullScreen 
                 loading="lazy"
-                title="Lokasi Kantor MogiApp"
+                title="Lokasi Kantor PT. Morfogenesis Teknologi Indonesia | Morfotech"
               ></iframe>
             </div>
           </div>
