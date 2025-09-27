@@ -1,44 +1,50 @@
-const mongoose = require('mongoose');
+module.exports = (sequelize, DataTypes) => {
+  const Blog = sequelize.define('Blog', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+    body: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    image: {
+      type: DataTypes.STRING
+    },
+    images_alt: {
+      type: DataTypes.STRING,
+      defaultValue: 'MogiApp Blog Image'
+    },
+    images_source: {
+      type: DataTypes.STRING,
+      defaultValue: 'Morfogenesis Teknologi Indonesia Creative Team'
+    },
+    createdBy: {
+      type: DataTypes.STRING,
+      defaultValue: 'Admin'
+    },
+    source: {
+      type: DataTypes.STRING,
+      defaultValue: 'Morfogenesis Teknologi Indonesia'
+    },
+    isShow: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
+  }, {
+    timestamps: true,
+    tableName: 'blogs'
+  });
 
-const BlogSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  slug: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true
-  },
-  body: {
-    type: String,
-    required: true
-  },
-  image: {
-    type: String
-  },
-  images_alt: {
-    type: String,
-    default: 'MogiApp Blog Image'
-  },
-  images_source: {
-    type: String,
-    default: 'Morfogenesis Teknologi Indonesia Creative Team'
-  },
-  createdBy: {
-    type: String,
-    default: 'Admin'
-  },
-  source: {
-    type: String,
-    default: 'Morfogenesis Teknologi Indonesia'
-  },
-  isShow: {
-    type: Boolean,
-    default: false
-  }
-}, { timestamps: true });
-
-module.exports = mongoose.model('Blog', BlogSchema);
+  return Blog;
+};

@@ -1,75 +1,37 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
-const multer = require('multer');
-const fs = require('fs');
-const config = require('./config');
-
-// Import routes
 const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require('./routes/userRoutes');
-const contactRoutes = require('./routes/contactRoutes');
 const productRoutes = require('./routes/productRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 
-// Create Express app
 const app = express();
-const PORT = config.PORT;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use('/uploads', express.static('uploads'));
 
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, config.UPLOAD_PATH);
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadsDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-  }
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-const upload = multer({ storage: storage });
-
-// Make upload middleware available globally
-app.locals.upload = upload;
-
-// Connect to MongoDB
-mongoose.connect(config.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected successfully'))
-.catch(err => console.error('MongoDB connection error:', err));
-
-// API Routes
+// Routes
 app.use('/api/blogs', blogRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/contact', contactRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/contact', contactRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!', error: err.message });
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ message: 'MogiApp Unified Suite API Server' });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
 module.exports = app;

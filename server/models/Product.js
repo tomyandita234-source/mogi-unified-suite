@@ -1,63 +1,57 @@
-const mongoose = require('mongoose');
-
-const ProductSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  slug: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  longDescription: {
-    type: String
-  },
-  category: {
-    type: String,
-    required: true,
-    enum: ['pos', 'pay', 'ops', 'fleet', 'sign', 'library', 'kampuz', 'dynamics', 'studio']
-  },
-  features: [{
-    type: String
-  }],
-  benefits: [{
-    type: String
-  }],
-  pricing: {
-    basic: {
-      price: String,
-      period: String,
-      features: [String]
+module.exports = (sequelize, DataTypes) => {
+  const Product = sequelize.define('Product', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
     },
-    pro: {
-      price: String,
-      period: String,
-      features: [String]
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
-    enterprise: {
-      price: String,
-      period: String,
-      features: [String]
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    longDescription: {
+      type: DataTypes.TEXT
+    },
+    category: {
+      type: DataTypes.ENUM('pos', 'pay', 'ops', 'fleet', 'sign', 'library', 'kampuz', 'dynamics', 'studio'),
+      allowNull: false
+    },
+    features: {
+      type: DataTypes.JSON, // Store as JSON array
+      defaultValue: []
+    },
+    benefits: {
+      type: DataTypes.JSON, // Store as JSON array
+      defaultValue: []
+    },
+    pricing: {
+      type: DataTypes.JSON, // Store entire pricing object as JSON
+      defaultValue: {}
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    imageUrl: {
+      type: DataTypes.STRING
+    },
+    sortOrder: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  imageUrl: {
-    type: String
-  },
-  sortOrder: {
-    type: Number,
-    default: 0
-  }
-}, { timestamps: true });
+  }, {
+    timestamps: true,
+    tableName: 'products'
+  });
 
-module.exports = mongoose.model('Product', ProductSchema);
+  return Product;
+};

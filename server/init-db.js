@@ -1,38 +1,35 @@
-const mongoose = require('mongoose');
+const { sequelize, User, Blog, Product } = require('./models');
 const config = require('./config');
 
-// Import models
-const User = require('./models/User');
-const Blog = require('./models/Blog');
-const Product = require('./models/Product');
-
-// Connect to MongoDB
-mongoose.connect(config.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+// Connect to MySQL
+sequelize.authenticate()
+.then(() => {
+  console.log('MySQL connected successfully');
+  console.log('Database:', config.DB_NAME);
+  console.log('Host:', config.DB_HOST);
+  console.log('Port:', config.DB_PORT);
+  
+  // Sync models with database
+  return sequelize.sync({ alter: true });
 })
 .then(() => {
-  console.log('MongoDB connected successfully');
-  console.log('Database:', mongoose.connection.name);
-  console.log('Host:', mongoose.connection.host);
-  console.log('Port:', mongoose.connection.port);
-  
+  console.log('Database synchronized');
   // Create a sample admin user
-  createSampleData();
+  return createSampleData();
 })
 .catch(err => {
-  console.error('MongoDB connection error:', err);
+  console.error('MySQL connection error:', err);
   process.exit(1);
 });
 
 async function createSampleData() {
   try {
     // Check if admin user already exists
-    const adminExists = await User.findOne({ role: 'admin' });
+    const adminExists = await User.findOne({ where: { role: 'admin' } });
     
     if (!adminExists) {
       // Create sample admin user
-      const adminUser = new User({
+      const adminUser = await User.create({
         username: 'admin',
         email: 'admin@mogiapp.com',
         password: 'admin123',
@@ -40,7 +37,6 @@ async function createSampleData() {
         isActive: true
       });
       
-      await adminUser.save();
       console.log('✅ Sample admin user created:');
       console.log(`   Username: ${adminUser.username}`);
       console.log(`   Email: ${adminUser.email}`);
@@ -50,11 +46,11 @@ async function createSampleData() {
     }
     
     // Check if sample blogs exist
-    const blogCount = await Blog.countDocuments();
+    const blogCount = await Blog.count();
     
     if (blogCount < 3) {
       // Clear existing blogs to ensure we have consistent sample data
-      await Blog.deleteMany({});
+      await Blog.destroy({ where: {} });
       
       // Create sample blog posts
       const sampleBlogs = [
@@ -91,8 +87,7 @@ async function createSampleData() {
       ];
       
       for (const blogData of sampleBlogs) {
-        const blog = new Blog(blogData);
-        await blog.save();
+        const blog = await Blog.create(blogData);
         console.log(`✅ Sample blog post created: ${blog.title}`);
       }
     } else {
@@ -100,11 +95,11 @@ async function createSampleData() {
     }
     
     // Check if sample products exist
-    const productCount = await Product.countDocuments();
+    const productCount = await Product.count();
     
     if (productCount < 8) {
       // Clear existing products to ensure we have consistent sample data
-      await Product.deleteMany({});
+      await Product.destroy({ where: {} });
       
       // Create sample products
       const sampleProducts = [
@@ -558,8 +553,7 @@ async function createSampleData() {
       ];
       
       for (const productData of sampleProducts) {
-        const product = new Product(productData);
-        await product.save();
+        const product = await Product.create(productData);
         console.log(`✅ Sample product created: ${product.name}`);
       }
     } else {
@@ -570,13 +564,12 @@ async function createSampleData() {
     console.log('You can now start your server with: npm start');
     
     // Close connection
-    mongoose.connection.close();
+    process.exit(0);
   } catch (error) {
     console.error('Error creating sample data:', error);
-    mongoose.connection.close();
     process.exit(1);
   }
 }
 
 console.log('🚀 Initializing MogiApp database...');
-console.log(`🔗 Connecting to: ${config.MONGODB_URI}`);
+console.log(`🔗 Connecting to: mysql://${config.DB_USER}:****@${config.DB_HOST}:${config.DB_PORT}/${config.DB_NAME}`);

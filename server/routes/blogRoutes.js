@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const blogController = require('../controllers/blogController');
+const blogController = require('../controllers/prisma/blogController');
+const auth = require('../middleware/authMiddleware');
 
 // Get all blogs
 router.get('/', blogController.getAllBlogs);
@@ -8,25 +9,13 @@ router.get('/', blogController.getAllBlogs);
 // Get single blog by ID
 router.get('/:id', blogController.getBlogById);
 
-// Create new blog
-router.post('/', (req, res, next) => {
-  const upload = req.app.locals.upload;
-  upload.single('image')(req, res, (err) => {
-    if (err) return next(err);
-    next();
-  });
-}, blogController.createBlog);
+// Create new blog (protected route)
+router.post('/', auth, blogController.createBlog);
 
-// Update blog
-router.put('/:id', (req, res, next) => {
-  const upload = req.app.locals.upload;
-  upload.single('image')(req, res, (err) => {
-    if (err) return next(err);
-    next();
-  });
-}, blogController.updateBlog);
+// Update blog (protected route)
+router.put('/:id', auth, blogController.updateBlog);
 
-// Delete blog
-router.delete('/:id', blogController.deleteBlog);
+// Delete blog (protected route)
+router.delete('/:id', auth, blogController.deleteBlog);
 
 module.exports = router;

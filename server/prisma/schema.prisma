@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id            Int      @id @default(autoincrement())
+  title         String
+  slug          String   @unique
+  body          String   @db.Text
+  image         String?
+  images_alt    String   @default("MogiApp Blog Image")
+  images_source String   @default("Morfogenesis Teknologi Indonesia Creative Team")
+  createdBy     String   @default("Admin")
+  source        String   @default("Morfogenesis Teknologi Indonesia")
+  isShow        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Product {
+  id              Int      @id @default(autoincrement())
+  name            String
+  slug            String   @unique
+  description     String   @db.Text
+  longDescription String?  @db.Text
+  category        String
+  features        Json
+  benefits        Json
+  pricing         Json
+  isActive        Boolean  @default(true)
+  imageUrl        String?
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

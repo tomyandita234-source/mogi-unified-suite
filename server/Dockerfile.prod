@@ -1,3 +1,4 @@
+# Production Dockerfile for MogiApp Server
 # Use Node.js 18 as base image
 FROM node:18-alpine
 
@@ -7,7 +8,7 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies including Prisma
+# Install production dependencies only
 RUN npm ci --only=production
 
 # Copy Prisma files
@@ -16,14 +17,21 @@ COPY prisma ./prisma/
 # Generate Prisma client
 RUN npx prisma generate
 
-# Copy server code
+# Copy application code
 COPY . .
+
+# Remove development files
+RUN rm -rf prisma/migrate-live.sh prisma/migrate-live.bat
 
 # Create uploads directory
 RUN mkdir -p ../uploads
 
 # Expose port
 EXPOSE 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:5000/api/health || exit 1
 
 # Start the application
 CMD ["npm", "start"]
