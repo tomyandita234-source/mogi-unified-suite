@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:7.0
+    container_name: mogiapp-mongodb-dev
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_dev:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+  # Backend server service with hot-reloading
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile.dev
+    container_name: mogiapp-server-dev
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/mogiapp
+      - PORT=5000
+      - JWT_SECRET=mogiapp-secret-key-docker
+    depends_on:
+      - mongodb
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: npm run dev
+
+  # Frontend service with hot-reloading
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: mogiapp-frontend-dev
+    restart: always
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://server:5000
+    depends_on:
+      - server
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+# Define named volumes
+volumes:
+  mongodb_data_dev:

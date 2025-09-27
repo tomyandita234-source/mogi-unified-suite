@@ -9,6 +9,8 @@ const config = require('./config');
 // Import routes
 const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require('./routes/userRoutes');
+const contactRoutes = require('./routes/contactRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 // Create Express app
 const app = express();
@@ -56,6 +58,8 @@ mongoose.connect(config.MONGODB_URI, {
 // API Routes
 app.use('/api/blogs', blogRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/products', productRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

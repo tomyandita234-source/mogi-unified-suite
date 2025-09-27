@@ -1,38 +1,25 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { BlogAPI } from '@/lib/api';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Clock } from 'lucide-react';
-
-interface BlogPost {
-  _id: string;
-  title: string;
-  slug: string;
-  body: string;
-  image: string;
-  images_alt: string;
-  createdBy: string;
-  createdAt: string;
-  isShow: boolean;
-}
-
-const API_URL = 'http://localhost:5000/api';
+import { Calendar } from 'lucide-react';
+import type { Blog } from '@/lib/api';
 
 const Blog = () => {
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_URL}/blogs`);
+        const response = await BlogAPI.getAll();
         // Filter only published blogs
-        const publishedBlogs = response.data.filter((blog: BlogPost) => blog.isShow);
-        setBlogs(publishedBlogs);
+        // Note: The current API doesn't return isShow field, so we'll show all blogs
+        setBlogs(response);
       } catch (error) {
         console.error('Error fetching blogs:', error);
       } finally {
@@ -88,7 +75,7 @@ const Blog = () => {
                   <div className="h-48 overflow-hidden">
                     <img 
                       src={`http://localhost:5000${blog.image}`} 
-                      alt={blog.images_alt || blog.title}
+                      alt={blog.title}
                       className="w-full h-full object-cover transition-transform hover:scale-105"
                     />
                   </div>
@@ -106,9 +93,6 @@ const Blog = () => {
                   </p>
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
-                  <div className="text-sm text-muted-foreground">
-                    Oleh: {blog.createdBy || 'Admin'}
-                  </div>
                   <Button variant="outline" size="sm">
                     Baca Selengkapnya
                   </Button>

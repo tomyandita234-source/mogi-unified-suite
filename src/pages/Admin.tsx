@@ -6,77 +6,58 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Trash2, Edit, Save, Image, Eye, EyeOff } from "lucide-react";
-import axios from 'axios';
+import { Plus, Trash2, Edit, Save, Eye, EyeOff } from "lucide-react";
+import { BlogAPI, ProductAPI, UserAPI } from '@/lib/api';
 import { useToast } from "@/hooks/use-toast";
-
-const API_URL = 'http://localhost:5000/api';
-
-interface Product {
-  _id?: string;
-  id: string;
-  name: string;
-  subtitle: string;
-  description: string;
-  features: string[];
-  icon: string;
-  color: string;
-  logoPath?: string;
-  active: boolean;
-}
-
-interface Blog {
-  _id?: string;
-  title: string;
-  slug: string;
-  body: string;
-  image?: string;
-  image_base64?: string;
-  images_alt?: string;
-  images_source?: string;
-  isShow: number;
-  createdBy?: string;
-  source?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import type { Blog, Product } from '@/lib/api';
 
 const Admin = () => {
   const { toast } = useToast();
-  const [products, setProducts] = useState<Product[]>([]);
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
-  const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [currentBlog, setCurrentBlog] = useState<Partial<Blog> | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<Partial<Product> | null>(null);
   const [isEditingBlog, setIsEditingBlog] = useState(false);
+  const [isEditingProduct, setIsEditingProduct] = useState(false);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [isLoggedIn, setIsLoggedIn] = useState(!!token);
-  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("blog");
   const [blogImage, setBlogImage] = useState<File | null>(null);
 
   useEffect(() => {
-    fetchProducts();
-    fetchBlogs();
-  }, [token]);
-
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/products`);
-      setProducts(response.data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
+    if (token) {
+      fetchBlogs();
+      fetchProducts();
     }
-  };
+  }, [token]);
 
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get(`${API_URL}/blogs`);
-      setBlogs(response.data);
-    } catch (error) {
+      const response = await BlogAPI.getAll();
+      setBlogs(response);
+    } catch (error: any) {
       console.error('Error fetching blogs:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch blogs",
+      });
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await ProductAPI.getAll();
+      setProducts(response);
+    } catch (error: any) {
+      console.error('Error fetching products:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch products",
+      });
     }
   };
 
@@ -85,22 +66,46 @@ const Admin = () => {
     setError('');
     
     try {
-      const response = await axios.post(`${API_URL}/users/login`, loginData);
-      const { token } = response.data;
-      
-      localStorage.setItem('token', token);
-      setToken(token);
-      setIsLoggedIn(true);
-      toast({
-        title: "Login berhasil",
-        description: "Selamat datang di dashboard admin",
+      // We need to adjust the API call to match the backend expectation
+      // The backend expects username, not email
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: loginData.username,
+          password: loginData.password
+        }),
       });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        const { token } = data;
+        localStorage.setItem('token', token);
+        setToken(token);
+        setIsLoggedIn(true);
+        fetchBlogs();
+        fetchProducts();
+        toast({
+          title: "Login berhasil",
+          description: "Selamat datang di dashboard admin",
+        });
+      } else {
+        setError(data.message || 'Login gagal');
+        toast({
+          variant: "destructive",
+          title: "Login gagal",
+          description: data.message || 'Username atau password salah',
+        });
+      }
     } catch (error: any) {
-      setError(error.response?.data?.message || 'Login gagal');
+      setError(error.message || 'Login gagal');
       toast({
         variant: "destructive",
         title: "Login gagal",
-        description: error.response?.data?.message || 'Email atau password salah',
+        description: error.message || 'Terjadi kesalahan saat login',
       });
     }
   };
@@ -109,6 +114,8 @@ const Admin = () => {
     localStorage.removeItem('token');
     setToken(null);
     setIsLoggedIn(false);
+    setBlogs([]);
+    setProducts([]);
     toast({
       title: "Logout berhasil",
       description: "Anda telah keluar dari sistem",
@@ -121,137 +128,6 @@ const Admin = () => {
       ...loginData,
       [name]: value
     });
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    if (currentProduct) {
-      setCurrentProduct({
-        ...currentProduct,
-        [name]: value
-      });
-    }
-  };
-
-  const handleFeatureChange = (index: number, value: string) => {
-    if (currentProduct) {
-      const updatedFeatures = [...currentProduct.features];
-      updatedFeatures[index] = value;
-      setCurrentProduct({
-        ...currentProduct,
-        features: updatedFeatures
-      });
-    }
-  };
-
-  const addFeature = () => {
-    if (currentProduct) {
-      setCurrentProduct({
-        ...currentProduct,
-        features: [...currentProduct.features, '']
-      });
-    }
-  };
-
-  const removeFeature = (index: number) => {
-    if (currentProduct) {
-      const updatedFeatures = [...currentProduct.features];
-      updatedFeatures.splice(index, 1);
-      setCurrentProduct({
-        ...currentProduct,
-        features: updatedFeatures
-      });
-    }
-  };
-
-  const handleEditProduct = (product: Product) => {
-    setCurrentProduct(product);
-    setIsEditing(true);
-  };
-
-  const handleNewProduct = () => {
-    setCurrentProduct({
-      id: '',
-      name: '',
-      subtitle: '',
-      description: '',
-      features: [''],
-      icon: 'ShoppingCart',
-      color: 'from-blue-500 to-indigo-500',
-      active: true
-    });
-    setIsEditing(true);
-  };
-
-  const handleSaveProduct = async () => {
-    if (!currentProduct) return;
-    
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token
-        }
-      };
-
-      if (currentProduct._id) {
-        // Update existing product
-        await axios.put(`${API_URL}/products/${currentProduct.id}`, currentProduct, config);
-      } else {
-        // Create new product
-        await axios.post(`${API_URL}/products`, currentProduct, config);
-      }
-      
-      fetchProducts();
-      setIsEditing(false);
-      setCurrentProduct(null);
-      
-      toast({
-        title: "Success",
-        description: `Product ${currentProduct._id ? 'updated' : 'created'} successfully`,
-      });
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.response?.data?.message || 'Something went wrong',
-      });
-    }
-  };
-
-  const handleDeleteProduct = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
-    
-    try {
-      const config = {
-        headers: {
-          'x-auth-token': token
-        }
-      };
-      
-      await axios.delete(`${API_URL}/products/${id}`, config);
-      fetchProducts();
-      
-      toast({
-        title: "Success",
-        description: "Product deleted successfully",
-      });
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.response?.data?.message || 'Something went wrong',
-      });
-    }
-  };
-
-  const handleActiveChange = (checked: boolean) => {
-    if (currentProduct) {
-      setCurrentProduct({
-        ...currentProduct,
-        active: checked
-      });
-    }
   };
 
   // Blog functions
@@ -276,7 +152,7 @@ const Admin = () => {
       title: '',
       slug: '',
       body: '',
-      isShow: 1
+      isShow: false
     });
     setIsEditingBlog(true);
     setImagePreview(null);
@@ -286,49 +162,16 @@ const Admin = () => {
     if (!currentBlog) return;
     
     try {
-      const formData = new FormData();
-      formData.append('title', currentBlog.title);
-      formData.append('slug', currentBlog.slug);
-      formData.append('body', currentBlog.body);
-      formData.append('isShow', currentBlog.isShow.toString());
-      
-      if (currentBlog.images_alt) {
-        formData.append('images_alt', currentBlog.images_alt);
-      }
-      
-      if (currentBlog.images_source) {
-        formData.append('images_source', currentBlog.images_source);
-      }
-      
-      if (currentBlog.source) {
-        formData.append('source', currentBlog.source);
-      }
-      
-      // Handle image upload if there's a new image
-      if (blogImage) {
-        formData.append('image', blogImage);
-      } else if (currentBlog.image_base64 && currentBlog.image_base64.startsWith('data:')) {
-        const base64Data = currentBlog.image_base64.split(',')[1];
-        const blob = await (await fetch(`data:image/jpeg;base64,${base64Data}`)).blob();
-        formData.append('image', blob, 'image.jpg');
-      }
-      
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'x-auth-token': token
-        }
-      };
-
       if (currentBlog._id) {
         // Update existing blog
-        await axios.put(`${API_URL}/blogs/${currentBlog._id}`, formData, config);
+        const updatedBlog = await BlogAPI.update(currentBlog._id, currentBlog);
+        setBlogs(blogs.map(blog => blog._id === updatedBlog._id ? updatedBlog : blog));
       } else {
         // Create new blog
-        await axios.post(`${API_URL}/blogs`, formData, config);
+        const newBlog = await BlogAPI.create(currentBlog);
+        setBlogs([...blogs, newBlog]);
       }
       
-      fetchBlogs();
       setIsEditingBlog(false);
       setCurrentBlog(null);
       setImagePreview(null);
@@ -342,7 +185,7 @@ const Admin = () => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.response?.data?.message || 'Something went wrong',
+        description: error.message || 'Something went wrong',
       });
     }
   };
@@ -351,14 +194,8 @@ const Admin = () => {
     if (!window.confirm('Are you sure you want to delete this blog?')) return;
     
     try {
-      const config = {
-        headers: {
-          'x-auth-token': token
-        }
-      };
-      
-      await axios.delete(`${API_URL}/blogs/${id}`, config);
-      fetchBlogs();
+      await BlogAPI.delete(id);
+      setBlogs(blogs.filter(blog => blog._id !== id));
       
       toast({
         title: "Success",
@@ -368,7 +205,7 @@ const Admin = () => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.response?.data?.message || 'Something went wrong',
+        description: error.message || 'Something went wrong',
       });
     }
   };
@@ -386,7 +223,7 @@ const Admin = () => {
       if (currentBlog) {
         setCurrentBlog({
           ...currentBlog,
-          image_base64: base64String
+          image: base64String
         });
       }
     };
@@ -397,7 +234,7 @@ const Admin = () => {
     if (currentBlog) {
       setCurrentBlog({
         ...currentBlog,
-        isShow: checked ? 1 : 0
+        isShow: checked
       });
     }
   };
@@ -416,6 +253,105 @@ const Admin = () => {
     }
   };
 
+  // Product functions
+  const handleProductInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if (currentProduct) {
+      setCurrentProduct({
+        ...currentProduct,
+        [name]: value
+      });
+    }
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setCurrentProduct(product);
+    setIsEditingProduct(true);
+  };
+
+  const handleNewProduct = () => {
+    setCurrentProduct({
+      name: '',
+      slug: '',
+      description: '',
+      longDescription: '',
+      category: 'pos',
+      features: [],
+      benefits: [],
+      pricing: {
+        basic: {
+          price: '',
+          period: '/bulan',
+          features: []
+        },
+        pro: {
+          price: '',
+          period: '/bulan',
+          features: []
+        },
+        enterprise: {
+          price: 'Custom',
+          period: '',
+          features: []
+        }
+      },
+      isActive: true,
+      imageUrl: '',
+      sortOrder: 0
+    });
+    setIsEditingProduct(true);
+  };
+
+  const handleSaveProduct = async () => {
+    if (!currentProduct) return;
+    
+    try {
+      if (currentProduct._id) {
+        // Update existing product
+        const updatedProduct = await ProductAPI.update(currentProduct._id, currentProduct);
+        setProducts(products.map(product => product._id === updatedProduct._id ? updatedProduct : product));
+      } else {
+        // Create new product
+        const newProduct = await ProductAPI.create(currentProduct);
+        setProducts([...products, newProduct]);
+      }
+      
+      setIsEditingProduct(false);
+      setCurrentProduct(null);
+      
+      toast({
+        title: "Success",
+        description: `Product ${currentProduct._id ? 'updated' : 'created'} successfully`,
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || 'Something went wrong',
+      });
+    }
+  };
+
+  const handleDeleteProduct = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    
+    try {
+      await ProductAPI.delete(id);
+      setProducts(products.filter(product => product._id !== id));
+      
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || 'Something went wrong',
+      });
+    }
+  };
+
   if (!isLoggedIn) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -428,12 +364,13 @@ const Admin = () => {
             <form onSubmit={handleLogin}>
               <div className="grid w-full items-center gap-4">
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="username">Username</Label>
                   <Input 
-                    id="email" 
-                    name="email"
-                    placeholder="Enter your email" 
-                    value={loginData.email}
+                    id="username" 
+                    name="username"
+                    type="text"
+                    placeholder="Enter your username" 
+                    value={loginData.username}
                     onChange={handleLoginInputChange}
                     required
                   />
@@ -454,108 +391,6 @@ const Admin = () => {
                 <Button type="submit" className="w-full">Login</Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (isEditing) {
-    return (
-      <div className="container mx-auto p-4">
-        <Button variant="outline" onClick={() => setIsEditing(false)} className="mb-4">
-          Back to Products
-        </Button>
-        <Card>
-          <CardHeader>
-            <CardTitle>{currentProduct?._id ? 'Edit Product' : 'Add New Product'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="name">Name</Label>
-                  <Input 
-                    id="name" 
-                    name="name"
-                    value={currentProduct?.name || ''} 
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="subtitle">Subtitle</Label>
-                  <Input 
-                    id="subtitle" 
-                    name="subtitle"
-                    value={currentProduct?.subtitle || ''} 
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="description">Description</Label>
-                <Textarea 
-                  id="description" 
-                  name="description"
-                  value={currentProduct?.description || ''} 
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="icon">Icon</Label>
-                  <Input 
-                    id="icon" 
-                    name="icon"
-                    value={currentProduct?.icon || ''} 
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="color">Color</Label>
-                  <Input 
-                    id="color" 
-                    name="color"
-                    value={currentProduct?.color || ''} 
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch 
-                  id="active" 
-                  checked={currentProduct?.active || false}
-                  onCheckedChange={handleActiveChange}
-                />
-                <Label htmlFor="active">Active</Label>
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label>Features</Label>
-                {currentProduct?.features.map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <Input 
-                      value={feature} 
-                      onChange={(e) => handleFeatureChange(index, e.target.value)}
-                    />
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => removeFeature(index)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </div>
-                ))}
-                <Button variant="outline" onClick={addFeature}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Feature
-                </Button>
-              </div>
-              <Button onClick={handleSaveProduct}>
-                <Save className="mr-2 h-4 w-4" />
-                Save Product
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -612,35 +447,6 @@ const Admin = () => {
                   className="min-h-[200px]"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="images_alt">Image Alt Text</Label>
-                  <Input 
-                    id="images_alt" 
-                    name="images_alt"
-                    value={currentBlog?.images_alt || ''} 
-                    onChange={handleBlogInputChange}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="images_source">Image Source</Label>
-                  <Input 
-                    id="images_source" 
-                    name="images_source"
-                    value={currentBlog?.images_source || ''} 
-                    onChange={handleBlogInputChange}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="source">Source</Label>
-                <Input 
-                  id="source" 
-                  name="source"
-                  value={currentBlog?.source || ''} 
-                  onChange={handleBlogInputChange}
-                />
-              </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="image">Featured Image</Label>
                 <div className="flex items-center space-x-2">
@@ -664,7 +470,7 @@ const Admin = () => {
               <div className="flex items-center space-x-2">
                 <Switch 
                   id="isShow" 
-                  checked={currentBlog?.isShow === 1}
+                  checked={currentBlog?.isShow || false}
                   onCheckedChange={handleBlogVisibilityChange}
                 />
                 <Label htmlFor="isShow">Visible</Label>
@@ -680,13 +486,131 @@ const Admin = () => {
     );
   }
 
+  if (isEditingProduct) {
+    return (
+      <div className="container mx-auto p-4">
+        <Button variant="outline" onClick={() => {
+          setIsEditingProduct(false);
+        }} className="mb-4">
+          Back to Products
+        </Button>
+        <Card>
+          <CardHeader>
+            <CardTitle>{currentProduct?._id ? 'Edit Product' : 'Add New Product'}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name">Product Name</Label>
+                  <Input 
+                    id="name" 
+                    name="name"
+                    value={currentProduct?.name || ''} 
+                    onChange={handleProductInputChange}
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="slug">Slug</Label>
+                  <Input 
+                    id="slug" 
+                    name="slug"
+                    value={currentProduct?.slug || ''} 
+                    onChange={handleProductInputChange}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="description">Short Description</Label>
+                <Input 
+                  id="description" 
+                  name="description"
+                  value={currentProduct?.description || ''} 
+                  onChange={handleProductInputChange}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="longDescription">Long Description</Label>
+                <Textarea 
+                  id="longDescription" 
+                  name="longDescription"
+                  value={currentProduct?.longDescription || ''} 
+                  onChange={handleProductInputChange}
+                  className="min-h-[100px]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="category">Category</Label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={currentProduct?.category || 'pos'}
+                    onChange={(e) => {
+                      if (currentProduct) {
+                        setCurrentProduct({
+                          ...currentProduct,
+                          category: e.target.value
+                        });
+                      }
+                    }}
+                    className="border border-input bg-background rounded-md p-2"
+                  >
+                    <option value="pos">Mogi POS</option>
+                    <option value="pay">MogiPay</option>
+                    <option value="ops">Mogi Ops</option>
+                    <option value="fleet">Mogi Fleet</option>
+                    <option value="sign">MogiSign</option>
+                    <option value="library">Mogi Library</option>
+                    <option value="kampuz">Mogi Kampuz</option>
+                    <option value="dynamics">Mogi Dynamics</option>
+                    <option value="studio">Mogi Studio</option>
+                  </select>
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="sortOrder">Sort Order</Label>
+                  <Input 
+                    id="sortOrder" 
+                    name="sortOrder"
+                    type="number"
+                    value={currentProduct?.sortOrder || 0} 
+                    onChange={handleProductInputChange}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="isActive" 
+                  checked={currentProduct?.isActive || false}
+                  onCheckedChange={(checked) => {
+                    if (currentProduct) {
+                      setCurrentProduct({
+                        ...currentProduct,
+                        isActive: checked
+                      });
+                    }
+                  }}
+                />
+                <Label htmlFor="isActive">Active</Label>
+              </div>
+              <Button onClick={handleSaveProduct}>
+                <Save className="mr-2 h-4 w-4" />
+                Save Product
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <Button variant="outline" onClick={handleLogout}>Logout</Button>
       </div>
-      <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="blog">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="blog">Blog Management</TabsTrigger>
           <TabsTrigger value="product">Product Management</TabsTrigger>
@@ -710,23 +634,20 @@ const Admin = () => {
                             <div>
                               <h3 className="font-medium">
                                 {blog.title}
-                                {blog.isShow === 1 ? (
+                                {blog.isShow ? (
                                   <Eye className="inline-block ml-2 h-4 w-4 text-green-500" />
                                 ) : (
                                   <EyeOff className="inline-block ml-2 h-4 w-4 text-red-500" />
                                 )}
                               </h3>
                               <p className="text-sm text-muted-foreground">{blog.slug}</p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {new Date(blog.createdAt!).toLocaleDateString()}
-                              </p>
                             </div>
                             <div className="flex gap-2">
                               <Button variant="ghost" size="icon" onClick={() => handleEditBlog(blog)}>
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => handleDeleteBlog(blog._id!)}>
-                                <Trash2 className="h-4 w-4 text-red-500" />
+                              <Button variant="ghost" size="icon" onClick={() => blog._id && handleDeleteBlog(blog._id)}>
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
                           </div>
@@ -736,12 +657,10 @@ const Admin = () => {
                   </div>
                 </div>
               )}
-              <div className="flex justify-center mt-4">
-                <Button onClick={handleNewBlog}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add New Blog
-                </Button>
-              </div>
+              <Button onClick={handleNewBlog} className="mt-4">
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Blog
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -764,27 +683,20 @@ const Admin = () => {
                             <div>
                               <h3 className="font-medium">
                                 {product.name}
-                                {product.active ? (
-                                  <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 ml-2">
-                                    Active
-                                  </span>
+                                {product.isActive ? (
+                                  <Eye className="inline-block ml-2 h-4 w-4 text-green-500" />
                                 ) : (
-                                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
-                                    Inactive
-                                  </span>
+                                  <EyeOff className="inline-block ml-2 h-4 w-4 text-red-500" />
                                 )}
                               </h3>
-                              <p className="text-sm text-muted-foreground">{product.subtitle}</p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {product.features.length} features
-                              </p>
+                              <p className="text-sm text-muted-foreground">{product.category}</p>
                             </div>
                             <div className="flex gap-2">
                               <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}>
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => handleDeleteProduct(product._id!)}>
-                                <Trash2 className="h-4 w-4 text-red-500" />
+                              <Button variant="ghost" size="icon" onClick={() => product._id && handleDeleteProduct(product._id)}>
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
                           </div>
@@ -794,12 +706,10 @@ const Admin = () => {
                   </div>
                 </div>
               )}
-              <div className="flex justify-center">
-                <Button onClick={handleNewProduct}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add New Product
-                </Button>
-              </div>
+              <Button onClick={handleNewProduct} className="mt-4">
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Product
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>

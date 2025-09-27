@@ -50,6 +50,22 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
+## Docker Setup (Recommended)
+
+For the easiest setup, you can run the entire application using Docker:
+
+```sh
+# Start all services (MongoDB, server, frontend)
+docker-compose up -d
+
+# Or for development with hot-reloading:
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+Your application will be available at:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000
+
 ## What technologies are used for this project?
 
 This project is built with:
@@ -59,6 +75,9 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Node.js
+- Express
+- MongoDB
 
 ## How can I deploy this project?
 

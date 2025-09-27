@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ShoppingCart, Settings, Truck, FileSignature, CreditCard, BookOpen, GraduationCap, Activity, Camera } from 'lucide-react';
+import { ArrowRight, ShoppingCart, Settings, Truck, FileSignature, CreditCard, BookOpen, GraduationCap, Activity, Camera, CheckCircle, Zap, Shield, Users, Award, HeadphonesIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import mogiPosLogo from '@/assets/mogi-pos-logo.png';
 import mogiOpsLogo from '@/assets/mogi-ops-logo.png';
 import mogiSignLogo from '@/assets/mogi-sign-logo.png';
@@ -163,6 +164,39 @@ const ProductShowcase = () => {
     }
   ];
 
+  const whyChooseUs = [
+    {
+      icon: CheckCircle,
+      title: "Solusi Terintegrasi",
+      description: "Semua produk kami dirancang untuk bekerja secara terintegrasi, memastikan alur kerja yang mulus tanpa perlu alat tambahan."
+    },
+    {
+      icon: Zap,
+      title: "Performa Tinggi",
+      description: "Platform kami dibangun dengan teknologi terkini untuk memberikan performa maksimal bahkan saat digunakan oleh banyak pengguna sekaligus."
+    },
+    {
+      icon: Shield,
+      title: "Keamanan Enterprise",
+      description: "Keamanan data adalah prioritas utama kami. Semua produk dilengkapi dengan enkripsi end-to-end dan sertifikasi keamanan internasional."
+    },
+    {
+      icon: Users,
+      title: "Dukungan Profesional",
+      description: "Tim support kami yang berpengalaman siap membantu Anda 24/7 dengan respon cepat dan solusi yang tepat."
+    },
+    {
+      icon: Award,
+      title: "Kualitas Terjamin",
+      description: "Produk kami telah diuji dan dipercaya oleh ribuan bisnis di seluruh Indonesia, dari UMKM hingga perusahaan besar."
+    },
+    {
+      icon: HeadphonesIcon,
+      title: "Implementasi Mudah",
+      description: "Proses implementasi yang cepat dan mudah dengan training yang komprehensif untuk memastikan tim Anda siap menggunakan produk."
+    }
+  ];
+
   return (
     <section id="produk" className="py-20 px-4 sm:px-6 lg:px-8 section-alt relative overflow-hidden">
       {/* Background Elements */}
@@ -221,12 +255,41 @@ const ProductShowcase = () => {
               </div>
 
               {/* CTA Button */}
-              <Button className="btn-outline w-full group">
-                Pelajari Lebih Lanjut
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <Link to={`/product/${product.id}`}>
+                <Button className="btn-outline w-full group">
+                  Pelajari Lebih Lanjut
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           ))}
+        </div>
+
+        {/* Why Choose Us Section */}
+        <div className="mt-24">
+          <div className="text-center mb-16">
+            <h2 className="section-title">Mengapa Memilih Produk Kami</h2>
+            <p className="section-subtitle max-w-3xl mx-auto">
+              Kami berkomitmen untuk memberikan solusi terbaik yang membantu bisnis Anda tumbuh dan berkembang
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {whyChooseUs.map((reason, index) => (
+              <div 
+                key={index} 
+                className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                  <reason.icon className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="heading-sm mb-4">{reason.title}</h3>
+                <p className="body-md text-muted-foreground">
+                  {reason.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

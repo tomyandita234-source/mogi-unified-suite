@@ -33,6 +33,11 @@ export interface Blog {
   slug: string;
   body: string;
   image: string;
+  images_alt: string;
+  images_source: string;
+  createdBy: string;
+  source: string;
+  isShow: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -57,24 +62,79 @@ export const BlogAPI = {
     }),
 };
 
+// Product API
+export interface Product {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  longDescription: string;
+  category: string;
+  features: string[];
+  benefits: string[];
+  pricing: {
+    basic: {
+      price: string;
+      period: string;
+      features: string[];
+    };
+    pro: {
+      price: string;
+      period: string;
+      features: string[];
+    };
+    enterprise: {
+      price: string;
+      period: string;
+      features: string[];
+    };
+  };
+  isActive: boolean;
+  imageUrl: string;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const ProductAPI = {
+  getAll: () => fetchAPI<Product[]>('/products'),
+  getById: (id: string) => fetchAPI<Product>(`/products/${id}`),
+  getBySlug: (slug: string) => fetchAPI<Product>(`/products/slug/${slug}`),
+  getByCategory: (category: string) => fetchAPI<Product[]>(`/products/category/${category}`),
+  create: (data: Partial<Product>) => 
+    fetchAPI<Product>('/products', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  update: (id: string, data: Partial<Product>) => 
+    fetchAPI<Product>(`/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+  delete: (id: string) => 
+    fetchAPI<{ success: boolean }>(`/products/${id}`, {
+      method: 'DELETE',
+    }),
+};
+
 // User API
 export interface User {
   _id: string;
-  name: string;
+  username: string;
   email: string;
   role: string;
 }
 
 export const UserAPI = {
-  login: (email: string, password: string) => 
+  login: (username: string, password: string) => 
     fetchAPI<{ token: string; user: User }>('/users/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     }),
-  register: (name: string, email: string, password: string) => 
+  register: (username: string, email: string, password: string) => 
     fetchAPI<{ token: string; user: User }>('/users/register', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ username, email, password }),
     }),
   getProfile: () => fetchAPI<User>('/users/profile'),
   updateProfile: (data: Partial<User>) => 
@@ -102,6 +162,7 @@ export const ContactAPI = {
 
 export default {
   blog: BlogAPI,
+  product: ProductAPI,
   user: UserAPI,
   contact: ContactAPI,
 };
