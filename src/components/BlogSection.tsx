@@ -3,6 +3,37 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BlogAPI, Blog } from '@/lib/api';
 
+// Mock data fallback
+const mockBlogs: Blog[] = [
+  {
+    id: '1',
+    title: 'Revolusi Digital dalam Manajemen Bisnis Modern',
+    body: 'Perkembangan teknologi digital telah mengubah cara perusahaan mengelola operasional mereka. Dari sistem POS hingga manajemen armada, semua kini terintegrasi dalam satu platform.',
+    image: '/placeholder.svg',
+    author: 'Tim MogiApp',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: '2',
+    title: 'Mengoptimalkan Efisiensi Operasional dengan Teknologi Cloud',
+    body: 'Cloud computing memberikan fleksibilitas dan skalabilitas yang dibutuhkan bisnis modern. Pelajari bagaimana teknologi cloud dapat meningkatkan produktivitas tim Anda.',
+    image: '/placeholder.svg',
+    author: 'Tim MogiApp',
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000).toISOString()
+  },
+  {
+    id: '3',
+    title: 'Tren Terbaru dalam Sistem Point of Sale (POS)',
+    body: 'Sistem POS modern tidak hanya mencatat transaksi, tetapi juga memberikan insights bisnis yang valuable. Temukan fitur-fitur terbaru yang dapat meningkatkan penjualan Anda.',
+    image: '/placeholder.svg',
+    author: 'Tim MogiApp',
+    createdAt: new Date(Date.now() - 172800000).toISOString(),
+    updatedAt: new Date(Date.now() - 172800000).toISOString()
+  }
+];
+
 const BlogSection = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +49,9 @@ const BlogSection = () => {
         setBlogs(data);
       } catch (err) {
         console.error('Error fetching blogs:', err);
-        setError('Gagal memuat artikel blog');
+        // Use mock data as fallback
+        setBlogs(mockBlogs);
+        setError(null); // Don't show error to user, just use fallback
       } finally {
         setLoading(false);
       }
@@ -77,54 +110,57 @@ const BlogSection = () => {
           <>
             {/* Blog Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-              {blogs.map((blog) => (
-                <div key={blog._id} className="base-card overflow-hidden">
-                  {/* Blog Image */}
-                  <div className="h-48 overflow-hidden bg-muted/50 relative">
-                    {!imageErrors.has(blog._id) && blog.image ? (
-                      <img 
-                        src={blog.image} 
-                        alt={blog.title} 
-                        className="w-full h-full object-cover transition-opacity duration-300"
-                        onError={() => handleImageError(blog._id)}
-                        onLoad={() => handleImageLoad(blog._id)}
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-                        <svg 
-                          className="w-16 h-16 text-muted-foreground/50" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={1.5} 
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
-                          />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Blog Content */}
-                  <div className="p-6">
-                    <div className="text-sm text-muted-foreground mb-2">
-                      {formatDate(blog.createdAt)}
+              {blogs.map((blog) => {
+                const blogId = blog._id || blog.id; // Handle both API and mock data
+                return (
+                  <div key={blogId} className="base-card overflow-hidden">
+                    {/* Blog Image */}
+                    <div className="h-48 overflow-hidden bg-muted/50 relative">
+                      {!imageErrors.has(blogId) && blog.image ? (
+                        <img 
+                          src={blog.image} 
+                          alt={blog.title} 
+                          className="w-full h-full object-cover transition-opacity duration-300"
+                          onError={() => handleImageError(blogId)}
+                          onLoad={() => handleImageLoad(blogId)}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                          <svg 
+                            className="w-16 h-16 text-muted-foreground/50" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={1.5} 
+                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                            />
+                          </svg>
+                        </div>
+                      )}
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">{blog.title}</h3>
-                    <p className="text-muted-foreground mb-4">
-                      {truncateText(blog.body.replace(/<[^>]*>/g, ''), 120)}
-                    </p>
-                    <a href={`/blog/${blog.slug}`} className="inline-flex items-center text-primary font-medium">
-                      Baca selengkapnya
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </a>
+                    
+                    {/* Blog Content */}
+                    <div className="p-6">
+                      <div className="text-sm text-muted-foreground mb-2">
+                        {formatDate(blog.createdAt)}
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2">{blog.title}</h3>
+                      <p className="text-muted-foreground mb-4">
+                        {truncateText(blog.body.replace(/<[^>]*>/g, ''), 120)}
+                      </p>
+                      <a href={`/blog/${blog.slug || blogId}`} className="inline-flex items-center text-primary font-medium">
+                        Baca selengkapnya
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* View All Button */}

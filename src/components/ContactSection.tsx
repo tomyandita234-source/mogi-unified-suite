@@ -198,7 +198,7 @@ const ContactSection = () => {
             {/* Google Maps Embed */}
             <div className="mt-8 h-64 rounded-xl overflow-hidden border border-border">
               <iframe 
-                src="https://maps.app.goo.gl/33dV6pcyC2WpuaRz7" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2391717!2d106.8146405!3d-6.2391717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f124d79b2257%3A0x316bf64cfe761e16!2sPT.%20Morfogenesis%20Teknologi%20Indonesia%20%7C%20Morfotech!5e0!3m2!1sen!2sid!4v1640000000000!5m2!1sen!2sid" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
