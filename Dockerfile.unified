@@ -1,0 +1,43 @@
+# Unified Dockerfile for MogiApp Frontend
+# Use Node.js 18 as base image
+FROM node:18-alpine AS base
+
+# Install additional dependencies
+RUN apk add --no-cache libc6-compat
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Development stage
+FROM base AS development
+RUN npm install
+COPY . .
+EXPOSE 5173
+CMD ["npm", "run", "dev"]
+
+# Build stage
+FROM base AS build
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine AS production
+# Install serve to serve the static files
+RUN npm install -g serve
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files and dist folder
+COPY package*.json ./
+COPY --from=build /app/dist ./dist
+
+# Expose port
+EXPOSE 80
+
+# Serve the application
+CMD ["serve", "-s", "dist", "-l", "80"]

@@ -1,13 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Check, X } from 'lucide-react';
+import { Check, X, Package, ShoppingCart, CreditCard, Settings, Truck, FileSignature, BookOpen, GraduationCap, Activity, Camera } from 'lucide-react';
+import { ProductAPI } from '@/lib/api';
+import type { Product } from '@/lib/api';
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Pricing data for all products
+  // Map product categories to icons
+  const iconMap: Record<string, React.ComponentType<any>> = {
+    pos: ShoppingCart,
+    pay: CreditCard,
+    ops: Settings,
+    fleet: Truck,
+    sign: FileSignature,
+    library: BookOpen,
+    kampuz: GraduationCap,
+    dynamics: Activity,
+    studio: Camera,
+  };
+
+  // Load products on component mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await ProductAPI.getAll();
+        setProducts(response);
+      } catch (err: any) {
+        console.error('Error fetching products:', err);
+        setError(err.message || 'Failed to fetch products');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Pricing data for general packages
   const pricingPlans = [
     {
       name: 'Basic',
@@ -75,116 +111,96 @@ const Pricing = () => {
     }
   ];
 
-  const products = [
+  // Product categories with descriptions
+  const productCategories = [
     {
       id: 'pos',
       name: 'Mogi POS',
       description: 'Solusi Point of Sale lengkap untuk bisnis ritel dan restoran',
-      features: [
-        'Transaksi cepat & akurat',
-        'Manajemen stok otomatis',
-        'Laporan penjualan real-time',
-        'Multi-outlet support',
-        'Payment gateway terintegrasi'
-      ]
+      icon: ShoppingCart
     },
     {
       id: 'pay',
       name: 'MogiPay',
       description: 'Payment gateway terintegrasi untuk transaksi digital',
-      features: [
-        'Multi payment gateway',
-        'Keamanan tingkat bank',
-        'Real-time transaction',
-        'API integration ready',
-        'Fraud detection system'
-      ]
+      icon: CreditCard
     },
     {
       id: 'ops',
       name: 'Mogi Ops',
       description: 'Manajemen operasional untuk efisiensi bisnis',
-      features: [
-        'Real-time project tracking',
-        'Team scheduling & assignment',
-        'Automated reporting',
-        'Performance analytics',
-        'Integration dengan Mogi POS'
-      ]
+      icon: Settings
     },
     {
       id: 'fleet',
       name: 'Mogi Fleet',
       description: 'Solusi manajemen armada dan tracking kendaraan',
-      features: [
-        'Real-time GPS tracking',
-        'Fuel consumption monitoring',
-        'Route optimization',
-        'Speed limit alerts',
-        'Remote engine control'
-      ]
+      icon: Truck
     },
     {
       id: 'sign',
       name: 'MogiSign',
       description: 'Platform tanda tangan elektronik',
-      features: [
-        'Digital signature verification',
-        'Encrypted document storage',
-        'Audit trail lengkap',
-        'Multi-platform support',
-        'Legal compliance'
-      ]
+      icon: FileSignature
     },
     {
       id: 'library',
       name: 'Mogi Library',
       description: 'Sistem manajemen perpustakaan digital',
-      features: [
-        'Digital catalog management',
-        'Member registration system',
-        'Book lending & return tracking',
-        'Fine calculation automatic',
-        'Digital library access'
-      ]
+      icon: BookOpen
     },
     {
       id: 'kampuz',
       name: 'Mogi Kampuz',
       description: 'Platform manajemen kampus terintegrasi',
-      features: [
-        'Student information system',
-        'Academic scheduling',
-        'Grade management',
-        'Online learning platform',
-        'Campus resource booking'
-      ]
+      icon: GraduationCap
     },
     {
       id: 'dynamics',
       name: 'Mogi Dynamics',
       description: 'Solusi monitoring & integrasi sistem',
-      features: [
-        'Real-time system monitoring',
-        'API integration hub',
-        'Performance analytics',
-        'Alert & notification system',
-        'Data synchronization'
-      ]
+      icon: Activity
     },
     {
       id: 'studio',
       name: 'Mogi Studio',
       description: 'Platform kreasi konten digital',
-      features: [
-        'Drag & drop editor',
-        'Template library',
-        'Brand asset management',
-        'Collaboration tools',
-        'Multi-format export'
-      ]
+      icon: Camera
     }
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-16 flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-lg text-foreground">Loading pricing information...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-16">
+          <div className="container mx-auto px-4 py-16">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold text-foreground mb-4">Error Loading Pricing</h1>
+              <p className="text-muted-foreground mb-8">{error}</p>
+              <Button onClick={() => window.location.reload()}>Try Again</Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -286,93 +302,180 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* All Products Section */}
+        {/* Product-Specific Pricing */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/50">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">Semua Produk MogiApp</h2>
+              <h2 className="text-3xl font-bold mb-4">Harga Per Produk</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Solusi terintegrasi untuk semua kebutuhan bisnis Anda
+                Harga spesifik untuk setiap produk dalam suite MogiApp
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product) => (
-                <div 
-                  key={product.id} 
-                  className="bg-background rounded-xl border border-border p-6 hover:shadow-md transition-shadow"
-                >
-                  <div className="mb-4">
-                    <h3 className="text-xl font-bold mb-2">{product.name}</h3>
-                    <p className="text-muted-foreground text-sm">{product.description}</p>
+              {productCategories.map((category) => {
+                // Find products in this category
+                const categoryProducts = products.filter(p => p.category === category.id);
+                
+                // Get the icon for this category
+                const IconComponent = iconMap[category.id] || Package;
+                
+                return (
+                  <div 
+                    key={category.id} 
+                    className="bg-background rounded-xl border border-border p-6 hover:shadow-md transition-shadow"
+                  >
+                    <div className="mb-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <IconComponent className="h-6 w-6 text-primary" />
+                        <h3 className="text-xl font-bold">{category.name}</h3>
+                      </div>
+                      <p className="text-muted-foreground text-sm">{category.description}</p>
+                    </div>
+                    
+                    {categoryProducts.length > 0 ? (
+                      <div className="space-y-4">
+                        {categoryProducts.map((product) => (
+                          <div key={product._id} className="border-t border-border pt-4">
+                            <h4 className="font-medium mb-2">{product.name}</h4>
+                            {product.pricing ? (
+                              <div className="space-y-2">
+                                {Object.entries(product.pricing).map(([plan, details]: [string, any]) => (
+                                  <div key={plan} className="flex justify-between text-sm">
+                                    <span className="capitalize">{plan}:</span>
+                                    <span className="font-medium">
+                                      {details.price === "Custom" ? "Custom" : `Rp ${details.price}`}
+                                      {details.period && <span className="text-muted-foreground"> {details.period}</span>}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">Harga custom</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Harga belum tersedia</p>
+                    )}
+                    
+                    <div className="mt-6">
+                      <a 
+                        href={`/product/${category.id}`} 
+                        className="text-primary hover:underline text-sm font-medium"
+                      >
+                        Pelajari lebih lanjut →
+                      </a>
+                    </div>
                   </div>
-                  
-                  <ul className="space-y-2">
-                    {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <div className="mt-6">
-                    <a 
-                      href={`/product/${product.id}`} 
-                      className="text-primary hover:underline text-sm font-medium"
-                    >
-                      Pelajari lebih lanjut →
-                    </a>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* All Products Section */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold mb-4">Semua Produk MogiApp</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Platform terintegrasi untuk semua kebutuhan bisnis Anda
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {productCategories.map((category) => {
+                const IconComponent = iconMap[category.id] || Package;
+                return (
+                  <div 
+                    key={category.id} 
+                    className="bg-background rounded-xl border border-border p-6 hover:shadow-md transition-all hover:border-primary/30"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="bg-primary/10 p-3 rounded-lg">
+                        <IconComponent className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold mb-2">{category.name}</h3>
+                        <p className="text-muted-foreground text-sm mb-4">{category.description}</p>
+                        <a 
+                          href={`/product/${category.id}`} 
+                          className="text-primary hover:underline text-sm font-medium inline-flex items-center"
+                        >
+                          Lihat Detail
+                          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/50">
           <div className="container mx-auto max-w-4xl">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold mb-4">Pertanyaan Umum</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Temukan jawaban untuk pertanyaan yang sering diajukan tentang paket dan harga kami.
+              <p className="text-lg text-muted-foreground">
+                Temukan jawaban untuk pertanyaan yang sering diajukan
               </p>
             </div>
-            
-            <div className="space-y-6">
+
+            <div className="space-y-4">
               {[
                 {
+                  question: "Apakah saya bisa mencoba produk sebelum membeli?",
+                  answer: "Ya, kami menyediakan versi demo gratis selama 14 hari untuk semua produk. Anda dapat mengakses semua fitur tanpa batasan selama periode percobaan."
+                },
+                {
+                  question: "Bagaimana cara pembayaran dilakukan?",
+                  answer: "Kami menerima pembayaran melalui transfer bank, kartu kredit, dan berbagai platform pembayaran digital. Pembayaran dapat dilakukan bulanan atau tahunan dengan diskon 20% untuk pembayaran tahunan."
+                },
+                {
                   question: "Apakah ada biaya setup atau instalasi?",
-                  answer: "Tidak, semua paket tidak dikenakan biaya setup atau instalasi tambahan. Proses implementasi sudah termasuk dalam paket yang Anda pilih."
+                  answer: "Tidak, semua paket kami tidak memiliki biaya setup atau instalasi tersembunyi. Semua biaya sudah termasuk dalam harga yang tercantum."
                 },
                 {
-                  question: "Bagaimana proses pembayaran dilakukan?",
-                  answer: "Pembayaran dilakukan secara otomatis setiap bulan atau tahun tergantung paket yang Anda pilih. Kami menerima pembayaran melalui transfer bank dan kartu kredit."
-                },
-                {
-                  question: "Apakah bisa upgrade atau downgrade paket?",
-                  answer: "Ya, Anda bisa kapan saja mengupgrade atau downgrade paket sesuai kebutuhan bisnis Anda tanpa biaya tambahan."
-                },
-                {
-                  question: "Apakah ada masa percobaan gratis?",
-                  answer: "Ya, semua paket kami menyediakan masa percobaan gratis selama 14 hari tanpa perlu kartu kredit."
-                },
-                {
-                  question: "Apakah data saya aman?",
-                  answer: "Ya, kami menggunakan enkripsi tingkat enterprise dan mengikuti standar keamanan internasional untuk melindungi data Anda."
+                  question: "Bagaimana dengan dukungan teknis?",
+                  answer: "Semua paket dilengkapi dengan dukungan teknis melalui email dan chat. Paket Professional dan Enterprise mendapatkan dukungan prioritas 24/7."
                 }
               ].map((faq, index) => (
-                <div key={index} className="border border-border rounded-xl p-6 bg-background">
-                  <h3 className="text-lg font-semibold mb-3">{faq.question}</h3>
+                <div key={index} className="bg-background rounded-xl border border-border p-6">
+                  <h3 className="font-bold text-lg mb-2">{faq.question}</h3>
                   <p className="text-muted-foreground">{faq.answer}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
+
+        {/* CTA Section */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
+          <div className="container mx-auto max-w-4xl">
+            <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Siap Memulai Perjalanan Digital Anda?</h2>
+              <p className="text-white/90 mb-8 max-w-2xl mx-auto">
+                Bergabunglah dengan ribuan bisnis yang telah mempercayai solusi kami untuk mengoptimalkan operasional mereka.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button className="bg-white text-primary hover:bg-white/90" size="lg">
+                  Mulai Sekarang
+                </Button>
+                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                  Jadwalkan Demo
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
-      
       <Footer />
     </div>
   );

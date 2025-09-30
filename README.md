@@ -1,134 +1,196 @@
 # MogiApp Unified Suite
 
-## Project Overview
+A comprehensive business solution platform with integrated Point of Sale, Payment Gateway, Operations Management, Fleet Tracking, Digital Signature, Library Management, Campus Management, CRM, and Content Creation tools.
 
-MogiApp Unified Suite is a full-stack web application with a React frontend and Node.js/Express backend, using MySQL as the database with Prisma ORM.
+## 🚀 Quick Start
 
-## How can I edit this code?
+### Docker Setup (Recommended)
 
-There are several ways of editing your application.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## Docker Setup (Recommended)
-
-For the easiest setup, you can run the entire application using Docker:
-
-```sh
-# Start all services (MySQL, server, frontend)
-docker-compose up -d
-
-# Or for development with hot-reloading:
-docker-compose -f docker-compose.dev.yml up -d
-```
-
-Your application will be available at:
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-- Node.js
-- Express
-- MySQL
-- Prisma ORM
-
-## Deployment
-
-### Prerequisites for Deployment
-
-1. Node.js 18+ installed on your server
-2. MySQL 8.0+ database accessible from your server
-3. Git installed on your server
-
-### Deployment Steps
-
-1. **Clone the Repository**
-   ```bash
-   git clone <your-repository-url>
-   cd mogi-unified-suite
-   ```
-
-2. **Set Environment Variables**
-   Create a `.env` file in the server directory with your configuration:
-   ```env
-   DATABASE_URL="mysql://username:password@host:port/database"
-   JWT_SECRET="your-jwt-secret"
-   PORT=5000
-   ```
-
-3. **Run Deployment Script**
-   On Linux/macOS:
-   ```bash
-   chmod +x deploy.sh
-   ./deploy.sh
-   ```
-   
-   On Windows:
-   ```cmd
-   deploy.bat
-   ```
-
-### Manual Deployment
-
-For manual deployment, refer to the detailed guide in [DEPLOYMENT.md](DEPLOYMENT.md) and [PRISMA_DEPLOYMENT_GUIDE.md](PRISMA_DEPLOYMENT_GUIDE.md).
-
-### Docker Deployment
-
-For containerized deployment, use the production docker-compose file:
 ```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
+# Clone the repository
+git clone <repository-url>
+cd mogi-unified-suite
 
-## Development
-
-To start the development environment:
-```bash
 # Start all services
 docker-compose up -d
 
-# Or start services separately
-cd server && npm run dev
-cd frontend && npm run dev
+# Access the application
+# Frontend: http://localhost
+# Backend API: http://localhost:5000
 ```
+
+### Traditional Setup
+
+```bash
+# Install dependencies
+npm install
+cd server
+npm install
+cd ..
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Run database migrations
+cd server
+npx prisma migrate deploy
+npm run init-db
+cd ..
+
+# Start development servers
+# Terminal 1:
+cd server
+npm run dev
+
+# Terminal 2:
+npm run dev
+```
+
+## 🏗️ Technology Stack
+
+-   **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui
+-   **Backend**: Node.js, Express.js, Prisma ORM
+-   **Database**: MySQL 8.0
+-   **Deployment**: Docker, Docker Compose
+
+## 📁 Project Structure
+
+```
+mogi-unified-suite/
+├── public/              # Static assets
+├── server/              # Backend server
+│   ├── controllers/     # Request handlers
+│   ├── middleware/      # Custom middleware
+│   ├── prisma/          # Database schema and migrations
+│   ├── routes/          # API routes
+│   ├── config.js        # Configuration
+│   └── index.js         # Server entry point
+├── src/                 # Frontend source
+│   ├── components/      # React components
+│   ├── hooks/           # Custom hooks
+│   ├── lib/             # Utility functions
+│   ├── pages/           # Page components
+│   ├── utils/           # Utility functions
+│   └── App.tsx          # Main App component
+├── uploads/             # Uploaded files
+├── docker-compose.yml   # Production Docker setup
+├── docker-compose.dev.yml # Development Docker setup
+└── README.md            # This file
+```
+
+## 🐳 Docker Deployment
+
+### Production Deployment
+
+```bash
+# Build and start production services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+```
+
+### Development Deployment
+
+```bash
+# Build and start development services with hot-reloading
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+## 🔧 Manual Deployment
+
+### Prerequisites
+
+-   Node.js 18+
+-   MySQL 8.0+
+-   Git
+
+### Steps
+
+1. **Clone Repository**
+
+    ```bash
+    git clone <repository-url>
+    cd mogi-unified-suite
+    ```
+
+2. **Install Dependencies**
+
+    ```bash
+    # Frontend
+    npm install
+
+    # Backend
+    cd server
+    npm install
+    cd ..
+    ```
+
+3. **Configure Environment**
+
+    ```bash
+    cp .env.example .env
+    # Edit .env with your configuration
+    ```
+
+4. **Database Setup**
+
+    ```bash
+    cd server
+    npx prisma generate
+    npx prisma migrate deploy
+    npm run init-db
+    cd ..
+    ```
+
+5. **Build Frontend**
+
+    ```bash
+    npm run build
+    ```
+
+6. **Start Services**
+
+    ```bash
+    # Start backend
+    cd server
+    npm start
+
+    # Start frontend (in another terminal)
+    cd ..
+    npm run preview
+    ```
+
+## 🌐 Accessing the Application
+
+-   **Frontend**: http://localhost (Docker) or http://localhost:5173 (Development)
+-   **Backend API**: http://localhost:5000
+-   **Health Check**: http://localhost:5000/api/health
+
+## 🔐 Default Admin Credentials
+
+-   **Username**: admin
+-   **Password**: admin123
+
+## 📚 API Documentation
+
+### Authentication
+
+-   `POST /api/users/login` - User login
+-   `POST /api/users/register` - User registration
+
+### User Management
+
+-   `GET /api/users/profile` - Get user profile
+-   `PUT /api/users/profile` - Update user profile
+-   `GET /api/users` - Get all users (admin only)
+-   `GET /api/users/:id` - Get user by ID (admin only)
+-   `PUT /api/users/:id` - Update user (admin only)
+-   `DELETE /api/users/:id` - Delete user (admin only)
+
+### Blog Management
+
+-   `GET /api/blogs` - Get all blogs
+-   `GET /api/blogs/:id` - Get blog by ID
+-   `POST /api/blogs` - Create new blog (admin

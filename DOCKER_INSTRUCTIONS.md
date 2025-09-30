@@ -19,7 +19,7 @@ Open PowerShell or Command Prompt as Administrator and run:
 
 ```bash
 # Navigate to your project directory
-cd c:\Users\Irham\Documents\mogi-unified-suite
+cd c:\Projects\go\mogi-unified-suite
 
 # Start all services
 docker-compose up -d
@@ -31,7 +31,7 @@ For development with live reloading:
 
 ```bash
 # Navigate to your project directory
-cd c:\Users\Irham\Documents\mogi-unified-suite
+cd c:\Projects\go\mogi-unified-suite
 
 # Start all services in development mode
 docker-compose -f docker-compose.dev.yml up -d
@@ -41,23 +41,27 @@ docker-compose -f docker-compose.dev.yml up -d
 
 Once running, the following services will be available:
 
-1. **Frontend**: http://localhost:5173
-   - React/Vite application with hot-reloading in dev mode
+1. **Frontend**: http://localhost
+
+    - React/Vite application with hot-reloading in dev mode
 
 2. **Backend API**: http://localhost:5000
-   - Express server with REST API endpoints
 
-3. **MongoDB**: mongodb://localhost:27017
-   - Database with persistent data storage
+    - Express server with REST API endpoints
+
+3. **MySQL Database**: mysql://localhost:3306
+    - Database with persistent data storage
 
 ## Useful Docker Commands
 
 ### View Running Containers
+
 ```bash
 docker-compose ps
 ```
 
 ### View Logs
+
 ```bash
 # View all logs
 docker-compose logs
@@ -65,10 +69,11 @@ docker-compose logs
 # View specific service logs
 docker-compose logs server
 docker-compose logs frontend
-docker-compose logs mongodb
+docker-compose logs mysql
 ```
 
 ### Stop Services
+
 ```bash
 # Stop all services
 docker-compose down
@@ -78,6 +83,7 @@ docker-compose stop server
 ```
 
 ### Rebuild Containers
+
 ```bash
 # Rebuild all containers
 docker-compose up -d --build
@@ -87,6 +93,7 @@ docker-compose build server
 ```
 
 ### Access Container Shells
+
 ```bash
 # Access server container
 docker exec -it mogiapp-server sh
@@ -94,8 +101,8 @@ docker exec -it mogiapp-server sh
 # Access frontend container
 docker exec -it mogiapp-frontend sh
 
-# Access MongoDB shell
-docker exec -it mogiapp-mongodb mongosh
+# Access MySQL shell
+docker exec -it mogiapp-mysql mysql -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE
 ```
 
 ## Troubleshooting
@@ -103,37 +110,42 @@ docker exec -it mogiapp-mongodb mongosh
 ### Common Issues
 
 1. **Permission Denied Errors**
-   - Solution: Run PowerShell/Command Prompt as Administrator
+
+    - Solution: Run PowerShell/Command Prompt as Administrator
 
 2. **Port Already in Use**
-   - Solution: Stop conflicting services or change ports in docker-compose.yml
+
+    - Solution: Stop conflicting services or change ports in docker-compose.yml
 
 3. **Build Failures**
-   - Solution: Check internet connection and try again
-   - Run: `docker-compose build --no-cache`
+
+    - Solution: Check internet connection and try again
+    - Run: `docker-compose build --no-cache`
 
 4. **Containers Not Starting**
-   - Check logs: `docker-compose logs`
-   - Ensure Docker Desktop is running
+    - Check logs: `docker-compose logs`
+    - Ensure Docker Desktop is running
 
 ### Windows-Specific Issues
 
 1. **Docker Desktop Not Starting**
-   - Ensure Windows Subsystem for Linux (WSL2) is installed
-   - Enable required Windows features:
-     - Hyper-V
-     - Windows Subsystem for Linux
-     - Virtual Machine Platform
+
+    - Ensure Windows Subsystem for Linux (WSL2) is installed
+    - Enable required Windows features:
+        - Hyper-V
+        - Windows Subsystem for Linux
+        - Virtual Machine Platform
 
 2. **File Sharing Issues**
-   - In Docker Desktop Settings > Resources > File Sharing
-   - Add your project directory to shared paths
+    - In Docker Desktop Settings > Resources > File Sharing
+    - Add your project directory to shared paths
 
 ## Data Persistence
 
-MongoDB data is stored in a Docker volume, which means your data will persist even if you stop and restart the containers.
+MySQL data is stored in a Docker volume, which means your data will persist even if you stop and restart the containers.
 
 To completely remove all data:
+
 ```bash
 docker-compose down -v
 ```
@@ -142,15 +154,18 @@ docker-compose down -v
 
 You can customize the application by modifying environment variables in the docker-compose.yml files:
 
-- `MONGODB_URI`: MongoDB connection string
-- `JWT_SECRET`: Secret key for JWT tokens
-- `VITE_API_URL`: Frontend API URL
+-   `MYSQL_ROOT_PASSWORD`: MySQL root password
+-   `MYSQL_DATABASE`: Database name
+-   `MYSQL_USER`: Database user
+-   `MYSQL_PASSWORD`: Database password
+-   `JWT_SECRET`: Secret key for JWT tokens
+-   `VITE_API_URL`: Frontend API URL
 
 ## Next Steps
 
-1. Access the frontend at http://localhost:5173
+1. Access the frontend at http://localhost
 2. Access the backend API at http://localhost:5000
 3. Test API endpoints using tools like Postman or curl
-4. Connect to MongoDB using a database client at mongodb://localhost:27017
+4. Connect to MySQL using a database client at mysql://localhost:3306
 
 Your application is now fully containerized and ready to use!

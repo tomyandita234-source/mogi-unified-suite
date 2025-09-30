@@ -1,299 +1,283 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, ShoppingCart, Settings, Truck, FileSignature, CreditCard, BookOpen, GraduationCap, Activity, Camera, CheckCircle, Zap, Shield, Users, Award, HeadphonesIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import mogiPosLogo from '@/assets/mogi-pos-logo.png';
-import mogiOpsLogo from '@/assets/mogi-ops-logo.png';
-import mogiSignLogo from '@/assets/mogi-sign-logo.png';
-import mogiPayLogo from '@/assets/mogi-pay-logo.png';
-import mogiLibraryLogo from '@/assets/mogi-library-logo.png';
-import mogiKampuzLogo from '@/assets/mogi-kampuz-logo.png';
-import mogiDynamicsLogo from '@/assets/mogi-dynamics-logo.png';
-import mogiStudioLogo from '@/assets/mogi-studio-logo.png';
+import { Button } from "@/components/ui/button"
+import { ArrowRight, CheckCircle, Zap, Shield, Users, Award, HeadphonesIcon } from "lucide-react"
+import { Link } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { ProductAPI } from "@/lib/api"
+import type { Product } from "@/lib/api"
+
+// Import logos
+import mogiPosLogo from "@/assets/mogi-pos-logo.png"
+import mogiOpsLogo from "@/assets/mogi-ops-logo.png"
+import mogiSignLogo from "@/assets/mogi-sign-logo.png"
+import mogiPayLogo from "@/assets/mogi-pay-logo.png"
+import mogiLibraryLogo from "@/assets/mogi-library-logo.png"
+import mogiKampuzLogo from "@/assets/mogi-kampuz-logo.png"
+import mogiDynamicsLogo from "@/assets/mogi-dynamics-logo.png"
+import mogiStudioLogo from "@/assets/mogi-studio-logo.png"
 
 const ProductShowcase = () => {
-  const products = [
-    {
-      id: 'pos',
-      name: 'Mogi POS',
-      logo: mogiPosLogo,
-      subtitle: 'Point of Sale Solution',
-      description: 'Kelola transaksi, inventaris, dan laporan penjualan dengan mudah. Interface yang intuitif dan laporan real-time untuk pengambilan keputusan yang tepat.',
-      features: [
-        'Transaksi cepat & akurat',
-        'Manajemen stok otomatis',
-        'Laporan penjualan real-time',
-        'Multi-outlet support',
-        'Payment gateway terintegrasi'
-      ],
-      icon: ShoppingCart,
-      color: 'from-cyan-500 to-blue-500'
-    },
-    {
-      id: 'pay',
-      name: 'MogiPay',
-      logo: mogiPayLogo,
-      subtitle: 'Payment Gateway Solution',
-      description: 'Solusi pembayaran digital yang aman dan terintegrasi. Mendukung berbagai metode pembayaran untuk kemudahan transaksi bisnis Anda.',
-      features: [
-        'Multi payment gateway',
-        'Keamanan tingkat bank',
-        'Real-time transaction',
-        'API integration ready',
-        'Fraud detection system'
-      ],
-      icon: CreditCard,
-      color: 'from-green-500 to-emerald-500'
-    },
-    {
-      id: 'ops',
-      name: 'Mogi Ops',
-      logo: mogiOpsLogo,
-      subtitle: 'Operations Management',
-      description: 'Pantau dan kelola operasional bisnis secara menyeluruh. Dari penjadwalan tim hingga monitoring progress dengan dashboard yang komprehensif.',
-      features: [
-        'Real-time project tracking',
-        'Team scheduling & assignment',
-        'Automated reporting',
-        'Performance analytics',
-        'Integration dengan Mogi POS'
-      ],
-      icon: Settings,
-      color: 'from-purple-500 to-pink-500'
-    },
-    {
-      id: 'fleet',
-      name: 'Mogi Fleet',
-      logo: mogiPosLogo,
-      subtitle: 'Fleet Management System',
-      description: 'Solusi komprehensif untuk tracking dan manajemen kendaraan dengan teknologi GPS terkini. Keamanan dan efisiensi dalam satu platform.',
-      features: [
-        'Real-time GPS tracking',
-        'Fuel consumption monitoring',
-        'Route optimization',
-        'Speed limit alerts',
-        'Remote engine control',
-        'Maintenance scheduling'
-      ],
-      icon: Truck,
-      color: 'from-orange-500 to-red-500'
-    },
-    {
-      id: 'sign',
-      name: 'MogiSign',
-      logo: mogiSignLogo,
-      subtitle: 'Digital Signature Platform',
-      description: 'Solusi tanda tangan elektronik yang aman dan sah secara hukum. Proses dokumen lebih cepat dengan keamanan tingkat enterprise.',
-      features: [
-        'Digital signature verification',
-        'Encrypted document storage',
-        'Audit trail lengkap',
-        'Multi-platform support',
-        'Legal compliance',
-        'Bulk signing capability'
-      ],
-      icon: FileSignature,
-      color: 'from-blue-500 to-indigo-500'
-    },
-    {
-      id: 'library',
-      name: 'Mogi Library',
-      logo: mogiLibraryLogo,
-      subtitle: 'Library Management System',
-      description: 'Sistem manajemen perpustakaan digital yang komprehensif. Kelola koleksi buku, anggota, dan peminjaman dengan mudah dan efisien.',
-      features: [
-        'Digital catalog management',
-        'Member registration system',
-        'Book lending & return tracking',
-        'Fine calculation automatic',
-        'Digital library access',
-        'Reading statistics'
-      ],
-      icon: BookOpen,
-      color: 'from-teal-500 to-cyan-500'
-    },
-    {
-      id: 'kampuz',
-      name: 'Mogi Kampuz',
-      logo: mogiKampuzLogo,
-      subtitle: 'Campus Management System',
-      description: 'Platform manajemen kampus yang terintegrasi. Solusi lengkap untuk administrasi akademik, mahasiswa, dan operasional kampus.',
-      features: [
-        'Student information system',
-        'Academic scheduling',
-        'Grade management',
-        'Online learning platform',
-        'Campus resource booking',
-        'Parent-student portal'
-      ],
-      icon: GraduationCap,
-      color: 'from-blue-600 to-purple-600'
-    },
-    {
-      id: 'dynamics',
-      name: 'Mogi Dynamics',
-      logo: mogiDynamicsLogo,
-      subtitle: 'Monitoring & Integration Solutions',
-      description: 'Solusi monitoring dan integrasi sistem yang powerful. Pantau performa aplikasi dan integrasikan berbagai sistem dengan mudah.',
-      features: [
-        'Real-time system monitoring',
-        'API integration hub',
-        'Performance analytics',
-        'Alert & notification system',
-        'Data synchronization',
-        'Custom dashboard builder'
-      ],
-      icon: Activity,
-      color: 'from-pink-500 to-rose-500'
-    },
-    {
-      id: 'studio',
-      name: 'Mogi Studio',
-      logo: mogiStudioLogo,
-      subtitle: 'Content Creation Platform',
-      description: 'Platform kreasi konten digital yang profesional. Tools lengkap untuk membuat, mengedit, dan mengelola konten multimedia bisnis Anda.',
-      features: [
-        'Drag & drop editor',
-        'Template library',
-        'Brand asset management',
-        'Collaboration tools',
-        'Multi-format export',
-        'Cloud storage integration'
-      ],
-      icon: Camera,
-      color: 'from-violet-500 to-purple-500'
-    }
-  ];
+	const [products, setProducts] = useState<Product[]>([])
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
 
-  const whyChooseUs = [
-    {
-      icon: CheckCircle,
-      title: "Solusi Terintegrasi",
-      description: "Semua produk kami dirancang untuk bekerja secara terintegrasi, memastikan alur kerja yang mulus tanpa perlu alat tambahan."
-    },
-    {
-      icon: Zap,
-      title: "Performa Tinggi",
-      description: "Platform kami dibangun dengan teknologi terkini untuk memberikan performa maksimal bahkan saat digunakan oleh banyak pengguna sekaligus."
-    },
-    {
-      icon: Shield,
-      title: "Keamanan Enterprise",
-      description: "Keamanan data adalah prioritas utama kami. Semua produk dilengkapi dengan enkripsi end-to-end dan sertifikasi keamanan internasional."
-    },
-    {
-      icon: Users,
-      title: "Dukungan Profesional",
-      description: "Tim support kami yang berpengalaman siap membantu Anda 24/7 dengan respon cepat dan solusi yang tepat."
-    },
-    {
-      icon: Award,
-      title: "Kualitas Terjamin",
-      description: "Produk kami telah diuji dan dipercaya oleh ribuan bisnis di seluruh Indonesia, dari UMKM hingga perusahaan besar."
-    },
-    {
-      icon: HeadphonesIcon,
-      title: "Implementasi Mudah",
-      description: "Proses implementasi yang cepat dan mudah dengan training yang komprehensif untuk memastikan tim Anda siap menggunakan produk."
-    }
-  ];
+	// Map product categories to logos
+	const logoMap: Record<string, string> = {
+		pos: mogiPosLogo,
+		pay: mogiPayLogo,
+		ops: mogiOpsLogo,
+		fleet: mogiPosLogo,
+		sign: mogiSignLogo,
+		library: mogiLibraryLogo,
+		kampuz: mogiKampuzLogo,
+		dynamics: mogiDynamicsLogo,
+		studio: mogiStudioLogo,
+	}
 
-  return (
-    <section id="produk" className="py-20 px-4 sm:px-6 lg:px-8 section-alt relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-16 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-16 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl"></div>
-      </div>
+	// Map product categories to colors
+	const colorMap: Record<string, string> = {
+		pos: "from-cyan-500 to-blue-500",
+		pay: "from-green-500 to-emerald-500",
+		ops: "from-purple-500 to-pink-500",
+		fleet: "from-orange-500 to-red-500",
+		sign: "from-blue-500 to-indigo-500",
+		library: "from-teal-500 to-cyan-500",
+		kampuz: "from-blue-600 to-purple-600",
+		dynamics: "from-pink-500 to-rose-500",
+		studio: "from-violet-500 to-purple-500",
+	}
 
-      <div className="container-width relative z-10">
-        {/* Section Header */}
-        <div className="section-header">
-          <h2 className="section-title">
-            Produk Kami
-          </h2>
-          <p className="section-subtitle">
-            Solusi terintegrasi untuk semua kebutuhan bisnis Anda. Dari Point of Sale hingga manajemen armada, 
-            semua dalam satu platform.
-          </p>
-        </div>
+	useEffect(() => {
+		const fetchProducts = async () => {
+			try {
+				setLoading(true)
+				const response = await ProductAPI.getAll()
+				setProducts(response)
+			} catch (err: any) {
+				console.error("Error fetching products:", err)
+				setError(err.message || "Failed to fetch products")
+			} finally {
+				setLoading(false)
+			}
+		}
 
-        {/* Product Grid - Apple-style minimalist design */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-16">
-          {products.map((product, index) => (
-            <div
-                key={product.id}
-                className="product-card group bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-lg hover:shadow-xl border border-white/10"
-              >
-              {/* Product Header */}
-              <div className="flex items-center gap-4 mb-8">
-                <div className="relative">
-                  <img 
-                    src={product.logo} 
-                    alt={`${product.name} Logo`}
-                    className="h-16 w-auto transition-smooth group-hover:scale-110"
-                  />
-                </div>
-                <div>
-                  <h3 className="heading-md text-foreground">{product.name}</h3>
-                  <p className="body-sm font-semibold text-primary">{product.subtitle}</p>
-                </div>
-              </div>
+		fetchProducts()
+	}, [])
 
-              {/* Product Description */}
-              <p className="body-md text-muted-foreground mb-8">
-                {product.description}
-              </p>
+	const whyChooseUs = [
+		{
+			icon: CheckCircle,
+			title: "Solusi Terintegrasi",
+			description:
+				"Semua produk kami dirancang untuk bekerja secara terintegrasi, memastikan alur kerja yang mulus tanpa perlu alat tambahan.",
+		},
+		{
+			icon: Zap,
+			title: "Performa Tinggi",
+			description:
+				"Platform kami dibangun dengan teknologi terkini untuk memberikan performa maksimal bahkan saat digunakan oleh banyak pengguna sekaligus.",
+		},
+		{
+			icon: Shield,
+			title: "Keamanan Enterprise",
+			description:
+				"Keamanan data adalah prioritas utama kami. Semua produk dilengkapi dengan enkripsi end-to-end dan sertifikasi keamanan internasional.",
+		},
+		{
+			icon: Users,
+			title: "Dukungan Profesional",
+			description:
+				"Tim support kami yang berpengalaman siap membantu Anda 24/7 dengan respon cepat dan solusi yang tepat.",
+		},
+		{
+			icon: Award,
+			title: "Kualitas Terjamin",
+			description:
+				"Produk kami telah diuji dan dipercaya oleh ribuan bisnis di seluruh Indonesia, dari UMKM hingga perusahaan besar.",
+		},
+		{
+			icon: HeadphonesIcon,
+			title: "Implementasi Mudah",
+			description:
+				"Proses implementasi yang cepat dan mudah dengan training yang komprehensif untuk memastikan tim Anda siap menggunakan produk.",
+		},
+	]
 
-              {/* Features List */}
-              <div className="space-y-4 mb-10">
-                {product.features.map((feature, featureIndex) => (
-                  <div key={featureIndex} className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
-                    <span className="body-sm text-foreground">{feature}</span>
-                  </div>
-                ))}
-              </div>
+	if (loading) {
+		return (
+			<section id="produk" className="py-20 px-4 sm:px-6 lg:px-8 section-alt relative overflow-hidden">
+				<div className="container-width relative z-10">
+					<div className="section-header">
+						<h2 className="section-title">Produk Kami</h2>
+						<p className="section-subtitle">
+							Solusi terintegrasi untuk semua kebutuhan bisnis Anda. Dari Point of Sale hingga manajemen
+							armada, semua dalam satu platform.
+						</p>
+					</div>
 
-              {/* CTA Button */}
-              <Link to={`/product/${product.id}`}>
-                <Button className="btn-outline w-full group">
-                  Pelajari Lebih Lanjut
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          ))}
-        </div>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-16">
+						{[1, 2, 3].map((index) => (
+							<div
+								key={index}
+								className="product-card group bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-lg hover:shadow-xl border border-white/10 animate-pulse"
+							>
+								<div className="flex items-center gap-4 mb-8">
+									<div className="h-16 w-16 bg-gray-300 rounded-full"></div>
+									<div>
+										<div className="h-6 bg-gray-300 rounded w-24 mb-2"></div>
+										<div className="h-4 bg-gray-300 rounded w-16"></div>
+									</div>
+								</div>
+								<div className="h-4 bg-gray-300 rounded w-full mb-4"></div>
+								<div className="h-4 bg-gray-300 rounded w-3/4 mb-8"></div>
+								<div className="space-y-3">
+									{[1, 2, 3].map((i) => (
+										<div key={i} className="flex items-center gap-3">
+											<div className="h-2 w-2 bg-gray-300 rounded-full"></div>
+											<div className="h-3 bg-gray-300 rounded w-4/5"></div>
+										</div>
+									))}
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			</section>
+		)
+	}
 
-        {/* Why Choose Us Section */}
-        <div className="mt-24">
-          <div className="text-center mb-16">
-            <h2 className="section-title">Mengapa Memilih Produk Kami</h2>
-            <p className="section-subtitle max-w-3xl mx-auto">
-              Kami berkomitmen untuk memberikan solusi terbaik yang membantu bisnis Anda tumbuh dan berkembang
-            </p>
-          </div>
+	if (error) {
+		return (
+			<section id="produk" className="py-20 px-4 sm:px-6 lg:px-8 section-alt relative overflow-hidden">
+				<div className="container-width relative z-10">
+					<div className="section-header">
+						<h2 className="section-title">Produk Kami</h2>
+						<p className="section-subtitle">
+							Solusi terintegrasi untuk semua kebutuhan bisnis Anda. Dari Point of Sale hingga manajemen
+							armada, semua dalam satu platform.
+						</p>
+					</div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {whyChooseUs.map((reason, index) => (
-              <div 
-                key={index} 
-                className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-                  <reason.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="heading-sm mb-4">{reason.title}</h3>
-                <p className="body-md text-muted-foreground">
-                  {reason.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
+					<div className="text-center py-12">
+						<p className="text-red-500">Error loading products: {error}</p>
+					</div>
+				</div>
+			</section>
+		)
+	}
 
-export default ProductShowcase;
+	return (
+		<section id="produk" className="py-20 px-4 sm:px-6 lg:px-8 section-alt relative overflow-hidden">
+			{/* Background Elements */}
+			<div className="absolute inset-0">
+				<div className="absolute top-16 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+				<div className="absolute bottom-16 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl"></div>
+			</div>
+
+			<div className="container-width relative z-10">
+				{/* Section Header */}
+				<div className="section-header">
+					<h2 className="section-title">Produk Kami</h2>
+					<p className="section-subtitle">
+						Solusi terintegrasi untuk semua kebutuhan bisnis Anda. Dari Point of Sale hingga manajemen
+						armada, semua dalam satu platform.
+					</p>
+				</div>
+
+				{/* Product Grid - Apple-style minimalist design */}
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-16">
+					{products.map((product) => {
+						// Parse JSON fields if they're strings
+						const features =
+							typeof product.features === "string" ? JSON.parse(product.features) : product.features
+
+						const logo = logoMap[product.category] || mogiPosLogo
+						const color = colorMap[product.category] || "from-cyan-500 to-blue-500"
+
+						return (
+							<div
+								key={product._id}
+								className="product-card group bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-lg hover:shadow-xl border border-white/10"
+							>
+								{/* Product Header */}
+								<div className="flex items-center gap-4 mb-8">
+									<div className="relative">
+										<img
+											src={logo}
+											alt={`${product.name} Logo`}
+											className="h-16 w-auto transition-smooth group-hover:scale-110"
+											loading="lazy"
+										/>
+									</div>
+									<div>
+										<h3 className="heading-md text-foreground">{product.name}</h3>
+										<p className="body-sm font-semibold text-primary">
+											{product.category === "pos" && "Point of Sale Solution"}
+											{product.category === "pay" && "Payment Gateway Solution"}
+											{product.category === "ops" && "Operations Management"}
+											{product.category === "fleet" && "Fleet Management System"}
+											{product.category === "sign" && "Digital Signature Platform"}
+											{product.category === "library" && "Library Management System"}
+											{product.category === "kampuz" && "Campus Management System"}
+											{product.category === "dynamics" && "Monitoring & Integration Solutions"}
+											{product.category === "studio" && "Content Creation Platform"}
+										</p>
+									</div>
+								</div>
+
+								{/* Product Description */}
+								<p className="body-md text-muted-foreground mb-8 line-clamp-3">{product.description}</p>
+
+								{/* Features List */}
+								<div className="space-y-4 mb-10">
+									{Array.isArray(features) &&
+										features.slice(0, 5).map((feature: string, featureIndex: number) => (
+											<div key={featureIndex} className="flex items-center gap-3">
+												<div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+												<span className="body-sm text-foreground">{feature}</span>
+											</div>
+										))}
+								</div>
+
+								{/* CTA Button */}
+								<Link to={`/product/${product.slug}`}>
+									<Button className="btn-outline w-full group">
+										Pelajari Lebih Lanjut
+										<ArrowRight className="ml-2 h-4 w-4" />
+									</Button>
+								</Link>
+							</div>
+						)
+					})}
+				</div>
+
+				{/* Why Choose Us Section */}
+				<div className="mt-24">
+					<div className="text-center mb-16">
+						<h2 className="section-title">Mengapa Memilih Produk Kami</h2>
+						<p className="section-subtitle max-w-3xl mx-auto">
+							Kami berkomitmen untuk memberikan solusi terbaik yang membantu bisnis Anda tumbuh dan
+							berkembang
+						</p>
+					</div>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+						{whyChooseUs.map((reason, index) => (
+							<div
+								key={index}
+								className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10 hover:shadow-lg transition-all duration-300"
+							>
+								<div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+									<reason.icon className="h-6 w-6 text-primary" />
+								</div>
+								<h3 className="heading-sm mb-4">{reason.title}</h3>
+								<p className="body-md text-muted-foreground">{reason.description}</p>
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+		</section>
+	)
+}
+
+export default ProductShowcase
