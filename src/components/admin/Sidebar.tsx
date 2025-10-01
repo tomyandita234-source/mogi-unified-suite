@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, FileText, ShoppingCart, Users, Mail, User, LogOut, Menu, X } from "lucide-react"
+import { LayoutDashboard, FileText, ShoppingCart, Users, Mail, User, LogOut, Menu, X, Youtube } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 
 interface SidebarProps {
@@ -20,6 +20,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }: SidebarProps) => {
 		{ id: "product", label: "Product Management", icon: ShoppingCart },
 		{ id: "user", label: "User Management", icon: Users },
 		{ id: "contact", label: "Contact Messages", icon: Mail },
+		{ id: "youtube", label: "YouTube Videos", icon: Youtube },
 		{ id: "profile", label: "Profile", icon: User },
 	]
 

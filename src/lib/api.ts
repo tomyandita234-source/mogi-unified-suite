@@ -10,11 +10,15 @@ const API_BASE_URL =
 async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
 	const url = `${API_BASE_URL}${endpoint}`
 
+	// Get token from localStorage if available
+	const token = localStorage.getItem("token")
+
 	try {
 		const response = await fetch(url, {
 			...options,
 			headers: {
 				"Content-Type": "application/json",
+				...(token && { Authorization: `Bearer ${token}` }),
 				...options.headers,
 			},
 		})
@@ -43,11 +47,17 @@ async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise
 async function fetchAPIWithFile<T>(endpoint: string, formData: FormData, method: string = "POST"): Promise<T> {
 	const url = `${API_BASE_URL}${endpoint}`
 
+	// Get token from localStorage if available
+	const token = localStorage.getItem("token")
+
 	try {
 		const response = await fetch(url, {
 			method,
 			body: formData,
 			// Don't set Content-Type header, let browser set it with boundary
+			headers: {
+				...(token && { Authorization: `Bearer ${token}` }),
+			},
 		})
 
 		if (!response.ok) {

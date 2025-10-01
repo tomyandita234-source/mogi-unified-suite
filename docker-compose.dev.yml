@@ -56,19 +56,22 @@ services:
     container_name: mogiapp-frontend-dev
     restart: always
     ports:
-      - "5173:5173"
+      - "8082:8082"
     env_file:
       - .env
     environment:
       - VITE_API_URL=http://server:5000
     depends_on:
       - server
-    volumes:
-      - .:/app
-      - /app/node_modules
+    # Remove volume mounts to avoid conflicts
+    # volumes:
+    #   - .:/app
+    #   - /app/node_modules
     # Limit memory to 1GB for frontend development
     mem_limit: 1024m
     mem_reservation: 512m
+    # Add platform specification to fix rollup issue
+    platform: linux/amd64
 
 # Define named volumes
 volumes:

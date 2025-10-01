@@ -1,9 +1,6 @@
 # Unified Dockerfile for MogiApp Frontend
 # Use Node.js 18 as base image
-FROM node:18-alpine AS base
-
-# Install additional dependencies
-RUN apk add --no-cache libc6-compat
+FROM node:18 AS base
 
 # Set working directory
 WORKDIR /app
@@ -13,14 +10,32 @@ COPY package*.json ./
 
 # Development stage
 FROM base AS development
-RUN npm install
+# Set environment variables to fix rollup issue
+ENV NODE_OPTIONS="--no-warnings"
+# Remove package-lock.json to avoid npm bug
+RUN rm -f package-lock.json
+# Install dependencies with specific flags to avoid optional dependency issues
+RUN npm install --no-optional --ignore-scripts
+# Install rollup separately with the correct platform
+RUN npm install @rollup/rollup-linux-x64-gnu --no-save
+# Rebuild node-gyp modules
+RUN npm rebuild
 COPY . .
-EXPOSE 5173
+EXPOSE 8082
 CMD ["npm", "run", "dev"]
 
 # Build stage
 FROM base AS build
-RUN npm install
+# Set environment variables to fix rollup issue
+ENV NODE_OPTIONS="--no-warnings"
+# Remove package-lock.json to avoid npm bug
+RUN rm -f package-lock.json
+# Install dependencies with specific flags to avoid optional dependency issues
+RUN npm install --no-optional --ignore-scripts
+# Install rollup separately with the correct platform
+RUN npm install @rollup/rollup-linux-x64-gnu --no-save
+# Rebuild node-gyp modules
+RUN npm rebuild
 COPY . .
 RUN npm run build
 

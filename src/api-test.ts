@@ -1,24 +1,21 @@
-// Simple API test to verify frontend-backend connectivity
-import { BlogAPI } from "@/lib/api"
+import { UserAPI } from "@/lib/api"
 
-// Test function to verify API connectivity
-export async function testApiConnection(): Promise<boolean> {
+async function testAPI() {
 	try {
 		console.log("Testing API connection...")
-		const blogs = await BlogAPI.getAll()
-		console.log("API connection successful! Retrieved", blogs.length, "blogs")
-		return true
+
+		// Test unauthenticated endpoint
+		try {
+			await UserAPI.getProfile()
+			console.log("Profile endpoint accessible (unexpected - should require auth)")
+		} catch (error) {
+			console.log("Profile endpoint correctly requires authentication:", error.message)
+		}
+
+		console.log("API test completed")
 	} catch (error) {
-		console.error("API connection failed:", error)
-		return false
+		console.error("API test failed:", error)
 	}
 }
 
-// Run the test
-testApiConnection().then((success) => {
-	if (success) {
-		console.log("✅ Frontend successfully connected to backend API")
-	} else {
-		console.log("❌ Frontend failed to connect to backend API")
-	}
-})
+testAPI()

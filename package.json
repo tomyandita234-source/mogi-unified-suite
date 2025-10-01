@@ -10,7 +10,8 @@
     "build:analyze": "vite build --mode analyze",
     "lint": "eslint .",
     "preview": "vite preview",
-    "analyze": "vite build --mode analyze"
+    "analyze": "vite build --mode analyze",
+    "postinstall": "node -e \"try { require('@rollup/rollup-linux-x64-gnu'); } catch (e) { console.log('Rollup module not available, continuing...'); }\""
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
