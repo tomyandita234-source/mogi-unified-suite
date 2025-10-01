@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -7,12 +6,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plus, Trash2, Edit, Save, Eye, EyeOff, User } from "lucide-react"
 import { BlogAPI, ProductAPI, UserAPI, ContactAPI } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import type { Blog, Product, User as UserType, ContactMessage } from "@/lib/api"
 import { validateUserRegistration, validateProductForm, validateBlogForm } from "@/utils/validation"
 import LoadingOverlay from "@/components/LoadingOverlay"
+import Sidebar from "@/components/admin/Sidebar"
+import Dashboard from "@/components/admin/Dashboard"
 
 // Interface for profile updates that can include password
 interface ProfileUpdateData {
@@ -22,6 +24,7 @@ interface ProfileUpdateData {
 
 const Admin = () => {
 	const { toast } = useToast()
+	const [activeTab, setActiveTab] = useState("dashboard")
 	const [blogs, setBlogs] = useState<Blog[]>([])
 	const [products, setProducts] = useState<Product[]>([])
 	const [users, setUsers] = useState<UserType[]>([])
@@ -176,6 +179,7 @@ const Admin = () => {
 		setProducts([])
 		setUsers([])
 		setCurrentProfile(null)
+		setActiveTab("dashboard")
 		toast({
 			title: "Logout berhasil",
 			description: "Anda telah keluar dari sistem",
@@ -677,24 +681,6 @@ const Admin = () => {
 		}
 	}
 
-	const handleUserRoleChange = (value: string) => {
-		if (currentUser) {
-			setCurrentUser({
-				...currentUser,
-				role: value,
-			})
-		}
-	}
-
-	const handleUserStatusChange = (checked: boolean) => {
-		if (currentUser) {
-			setCurrentUser({
-				...currentUser,
-				isActive: checked,
-			})
-		}
-	}
-
 	const handleDeleteContact = async (id: string) => {
 		if (!window.confirm("Are you sure you want to delete this contact message?")) return
 
@@ -711,6 +697,24 @@ const Admin = () => {
 				variant: "destructive",
 				title: "Error",
 				description: error.message || "Something went wrong",
+			})
+		}
+	}
+
+	const handleUserRoleChange = (value: string) => {
+		if (currentUser) {
+			setCurrentUser({
+				...currentUser,
+				role: value,
+			})
+		}
+	}
+
+	const handleUserStatusChange = (checked: boolean) => {
+		if (currentUser) {
+			setCurrentUser({
+				...currentUser,
+				isActive: checked,
 			})
 		}
 	}
@@ -877,6 +881,43 @@ const Admin = () => {
 											Generate
 										</Button>
 									</div>
+								</div>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div className="flex flex-col space-y-1.5">
+									<Label htmlFor="productId">Product (Optional)</Label>
+									<Select
+										value={currentBlog?.productId || ""}
+										onValueChange={(value) => {
+											if (currentBlog) {
+												setCurrentBlog({
+													...currentBlog,
+													productId: value || undefined,
+												})
+											}
+										}}
+									>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a product" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="">No Product</SelectItem>
+											{products.map((product) => (
+												<SelectItem key={product._id} value={product._id}>
+													{product.name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+								<div className="flex flex-col space-y-1.5">
+									<Label htmlFor="createdBy">Author</Label>
+									<Input
+										id="createdBy"
+										name="createdBy"
+										value={currentBlog?.createdBy || "Admin"}
+										onChange={handleBlogInputChange}
+									/>
 								</div>
 							</div>
 							<div className="flex flex-col space-y-1.5">
@@ -1139,232 +1180,237 @@ const Admin = () => {
 	}
 
 	return (
-		<div className="container mx-auto p-4 relative">
-			<LoadingOverlay isLoading={loading} message="Loading data..." overlay={true} />
-			<div className="flex justify-between items-center mb-4">
-				<h1 className="text-2xl font-bold">Admin Dashboard</h1>
-				<Button variant="outline" onClick={handleLogout}>
-					Logout
-				</Button>
-			</div>
-			<Tabs defaultValue="blog">
-				<TabsList className="grid w-full grid-cols-5">
-					<TabsTrigger value="blog">Blog Management</TabsTrigger>
-					<TabsTrigger value="product">Product Management</TabsTrigger>
-					<TabsTrigger value="user">User Management</TabsTrigger>
-					<TabsTrigger value="contact">Contact Messages</TabsTrigger>
-					<TabsTrigger value="profile">Profile</TabsTrigger>
-				</TabsList>
-				<TabsContent value="blog">
-					<Card>
-						<CardHeader>
-							<CardTitle>Blog Posts</CardTitle>
-							<CardDescription>Manage your blog posts</CardDescription>
-						</CardHeader>
-						<CardContent>
-							{blogs.length === 0 ? (
-								<p>No blogs found. Create your first blog post.</p>
-							) : (
-								<div className="space-y-4">
-									<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-										{blogs.map((blog) => (
-											<Card key={blog._id} className="overflow-hidden">
-												<div className="p-4">
-													<div className="flex justify-between items-start">
-														<div>
-															<h3 className="font-medium">
-																{blog.title}
-																{blog.isShow ? (
-																	<Eye className="inline-block ml-2 h-4 w-4 text-green-500" />
-																) : (
-																	<EyeOff className="inline-block ml-2 h-4 w-4 text-red-500" />
-																)}
-															</h3>
-															<p className="text-sm text-muted-foreground">{blog.slug}</p>
-														</div>
-														<div className="flex gap-2">
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() => handleEditBlog(blog)}
-															>
-																<Edit className="h-4 w-4" />
-															</Button>
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() => blog._id && handleDeleteBlog(blog._id)}
-															>
-																<Trash2 className="h-4 w-4" />
-															</Button>
+		<div className="flex min-h-screen">
+			<Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
+
+			<div className="flex-1 lg:ml-64">
+				<LoadingOverlay isLoading={loading} message="Loading data..." overlay={true} />
+
+				<div className="p-4 lg:p-6">
+					{activeTab === "dashboard" && <Dashboard />}
+
+					{activeTab === "blog" && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Blog Posts</CardTitle>
+								<CardDescription>Manage your blog posts</CardDescription>
+							</CardHeader>
+							<CardContent>
+								{blogs.length === 0 ? (
+									<p>No blogs found. Create your first blog post.</p>
+								) : (
+									<div className="space-y-4">
+										<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+											{blogs.map((blog) => (
+												<Card key={blog._id} className="overflow-hidden">
+													<div className="p-4">
+														<div className="flex justify-between items-start">
+															<div>
+																<h3 className="font-medium">
+																	{blog.title}
+																	{blog.isShow ? (
+																		<Eye className="inline-block ml-2 h-4 w-4 text-green-500" />
+																	) : (
+																		<EyeOff className="inline-block ml-2 h-4 w-4 text-red-500" />
+																	)}
+																</h3>
+																<p className="text-sm text-muted-foreground">
+																	{blog.slug}
+																</p>
+															</div>
+															<div className="flex gap-2">
+																<Button
+																	variant="ghost"
+																	size="icon"
+																	onClick={() => handleEditBlog(blog)}
+																>
+																	<Edit className="h-4 w-4" />
+																</Button>
+																<Button
+																	variant="ghost"
+																	size="icon"
+																	onClick={() =>
+																		blog._id && handleDeleteBlog(blog._id)
+																	}
+																>
+																	<Trash2 className="h-4 w-4" />
+																</Button>
+															</div>
 														</div>
 													</div>
-												</div>
-											</Card>
-										))}
+												</Card>
+											))}
+										</div>
 									</div>
-								</div>
-							)}
-							<Button onClick={handleNewBlog} className="mt-4">
-								<Plus className="mr-2 h-4 w-4" />
-								Add New Blog
-							</Button>
-						</CardContent>
-					</Card>
-				</TabsContent>
-				<TabsContent value="product">
-					<Card>
-						<CardHeader>
-							<CardTitle>Products</CardTitle>
-							<CardDescription>Manage your products</CardDescription>
-						</CardHeader>
-						<CardContent>
-							{products.length === 0 ? (
-								<p>No products found. Create your first product.</p>
-							) : (
-								<div className="space-y-4">
-									<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-										{products.map((product) => (
-											<Card key={product._id} className="overflow-hidden">
-												<div className="p-4">
-													<div className="flex justify-between items-start">
-														<div>
-															<h3 className="font-medium">
-																{product.name}
-																{product.isActive ? (
-																	<Eye className="inline-block ml-2 h-4 w-4 text-green-500" />
-																) : (
-																	<EyeOff className="inline-block ml-2 h-4 w-4 text-red-500" />
-																)}
-															</h3>
-															<p className="text-sm text-muted-foreground">
-																{product.category}
-															</p>
-														</div>
-														<div className="flex gap-2">
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() => handleEditProduct(product)}
-															>
-																<Edit className="h-4 w-4" />
-															</Button>
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() =>
-																	product._id && handleDeleteProduct(product._id)
-																}
-															>
-																<Trash2 className="h-4 w-4" />
-															</Button>
+								)}
+								<Button onClick={handleNewBlog} className="mt-4">
+									<Plus className="mr-2 h-4 w-4" />
+									Add New Blog
+								</Button>
+							</CardContent>
+						</Card>
+					)}
+
+					{activeTab === "product" && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Products</CardTitle>
+								<CardDescription>Manage your products</CardDescription>
+							</CardHeader>
+							<CardContent>
+								{products.length === 0 ? (
+									<p>No products found. Create your first product.</p>
+								) : (
+									<div className="space-y-4">
+										<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+											{products.map((product) => (
+												<Card key={product._id} className="overflow-hidden">
+													<div className="p-4">
+														<div className="flex justify-between items-start">
+															<div>
+																<h3 className="font-medium">
+																	{product.name}
+																	{product.isActive ? (
+																		<Eye className="inline-block ml-2 h-4 w-4 text-green-500" />
+																	) : (
+																		<EyeOff className="inline-block ml-2 h-4 w-4 text-red-500" />
+																	)}
+																</h3>
+																<p className="text-sm text-muted-foreground capitalize">
+																	{product.category}
+																</p>
+															</div>
+															<div className="flex gap-2">
+																<Button
+																	variant="ghost"
+																	size="icon"
+																	onClick={() => handleEditProduct(product)}
+																>
+																	<Edit className="h-4 w-4" />
+																</Button>
+																<Button
+																	variant="ghost"
+																	size="icon"
+																	onClick={() =>
+																		product._id && handleDeleteProduct(product._id)
+																	}
+																>
+																	<Trash2 className="h-4 w-4" />
+																</Button>
+															</div>
 														</div>
 													</div>
-												</div>
-											</Card>
-										))}
+												</Card>
+											))}
+										</div>
 									</div>
-								</div>
-							)}
-							<Button onClick={handleNewProduct} className="mt-4">
-								<Plus className="mr-2 h-4 w-4" />
-								Add New Product
-							</Button>
-						</CardContent>
-					</Card>
-				</TabsContent>
-				<TabsContent value="user">
-					<Card>
-						<CardHeader>
-							<CardTitle>Users</CardTitle>
-							<CardDescription>Manage your users</CardDescription>
-						</CardHeader>
-						<CardContent>
-							{users.length === 0 ? (
-								<p>No users found.</p>
-							) : (
-								<div className="space-y-4">
-									<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-										{users.map((user) => (
-											<Card key={user._id} className="overflow-hidden">
-												<div className="p-4">
-													<div className="flex justify-between items-start">
-														<div>
-															<h3 className="font-medium">
-																{user.username}
-																{user.isActive ? (
-																	<Eye className="inline-block ml-2 h-4 w-4 text-green-500" />
-																) : (
-																	<EyeOff className="inline-block ml-2 h-4 w-4 text-red-500" />
-																)}
-															</h3>
-															<p className="text-sm text-muted-foreground">
-																{user.email}
-															</p>
-															<p className="text-xs text-muted-foreground mt-1">
-																Role: {user.role}
-															</p>
-														</div>
-														<div className="flex gap-2">
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() => handleEditUser(user)}
-															>
-																<Edit className="h-4 w-4" />
-															</Button>
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() => user._id && handleDeleteUser(user._id)}
-																disabled={user.role === "admin"}
-															>
-																<Trash2 className="h-4 w-4" />
-															</Button>
+								)}
+								<Button onClick={handleNewProduct} className="mt-4">
+									<Plus className="mr-2 h-4 w-4" />
+									Add New Product
+								</Button>
+							</CardContent>
+						</Card>
+					)}
+
+					{activeTab === "user" && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Users</CardTitle>
+								<CardDescription>Manage system users</CardDescription>
+							</CardHeader>
+							<CardContent>
+								{users.length === 0 ? (
+									<p>No users found. Create your first user.</p>
+								) : (
+									<div className="space-y-4">
+										<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+											{users.map((user) => (
+												<Card key={user._id} className="overflow-hidden">
+													<div className="p-4">
+														<div className="flex justify-between items-start">
+															<div>
+																<h3 className="font-medium flex items-center gap-2">
+																	{user.username}
+																	{user.role === "admin" && (
+																		<Badge variant="secondary">Admin</Badge>
+																	)}
+																</h3>
+																<p className="text-sm text-muted-foreground">
+																	{user.email}
+																</p>
+																<div className="flex items-center gap-2 mt-1">
+																	<div
+																		className={`w-2 h-2 rounded-full ${
+																			user.isActive
+																				? "bg-green-500"
+																				: "bg-red-500"
+																		}`}
+																	></div>
+																	<span className="text-xs">
+																		{user.isActive ? "Active" : "Inactive"}
+																	</span>
+																</div>
+															</div>
+															<div className="flex gap-2">
+																<Button
+																	variant="ghost"
+																	size="icon"
+																	onClick={() => handleEditUser(user)}
+																>
+																	<Edit className="h-4 w-4" />
+																</Button>
+																<Button
+																	variant="ghost"
+																	size="icon"
+																	onClick={() =>
+																		user._id && handleDeleteUser(user._id)
+																	}
+																>
+																	<Trash2 className="h-4 w-4" />
+																</Button>
+															</div>
 														</div>
 													</div>
-												</div>
-											</Card>
-										))}
+												</Card>
+											))}
+										</div>
 									</div>
-								</div>
-							)}
-							<Button onClick={handleNewUser} className="mt-4">
-								<Plus className="mr-2 h-4 w-4" />
-								Add New User
-							</Button>
-						</CardContent>
-					</Card>
-				</TabsContent>
-				<TabsContent value="contact">
-					<Card>
-						<CardHeader>
-							<CardTitle>Contact Messages</CardTitle>
-							<CardDescription>Manage contact form messages</CardDescription>
-						</CardHeader>
-						<CardContent>
-							{contacts.length === 0 ? (
-								<p>No contact messages found.</p>
-							) : (
-								<div className="space-y-4">
-									<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+								)}
+								<Button onClick={handleNewUser} className="mt-4">
+									<Plus className="mr-2 h-4 w-4" />
+									Add New User
+								</Button>
+							</CardContent>
+						</Card>
+					)}
+
+					{activeTab === "contact" && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Contact Messages</CardTitle>
+								<CardDescription>Manage contact form submissions</CardDescription>
+							</CardHeader>
+							<CardContent>
+								{contacts.length === 0 ? (
+									<p>No contact messages found.</p>
+								) : (
+									<div className="space-y-4">
 										{contacts.map((contact) => (
 											<Card key={contact._id} className="overflow-hidden">
 												<div className="p-4">
 													<div className="flex justify-between items-start">
-														<div>
-															<h3 className="font-medium">{contact.name}</h3>
+														<div className="flex-1">
+															<div className="flex items-center gap-2">
+																<h3 className="font-medium">{contact.name}</h3>
+																<Badge variant="secondary">
+																	{new Date(contact.createdAt).toLocaleDateString()}
+																</Badge>
+															</div>
 															<p className="text-sm text-muted-foreground">
 																{contact.email}
 															</p>
-															{contact.phone && (
-																<p className="text-xs text-muted-foreground mt-1">
-																	Phone: {contact.phone}
-																</p>
-															)}
-															<p className="text-xs text-muted-foreground mt-2">
-																{new Date(contact.createdAt).toLocaleString()}
-															</p>
+															<p className="text-sm mt-2">{contact.message}</p>
 														</div>
 														<Button
 															variant="ghost"
@@ -1376,66 +1422,45 @@ const Admin = () => {
 															<Trash2 className="h-4 w-4" />
 														</Button>
 													</div>
-													<div className="mt-3">
-														<p className="text-sm text-foreground line-clamp-3">
-															{contact.message}
-														</p>
-													</div>
 												</div>
 											</Card>
 										))}
 									</div>
-								</div>
-							)}
-						</CardContent>
-					</Card>
-				</TabsContent>
-				<TabsContent value="profile">
-					<Card>
-						<CardHeader>
-							<CardTitle>Profile</CardTitle>
-							<CardDescription>Manage your profile information</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div className="grid gap-6">
-								<div className="flex items-center gap-4">
-									<div className="bg-primary/10 p-3 rounded-full">
-										<User className="h-8 w-8 text-primary" />
-									</div>
-									<div>
-										<h3 className="text-lg font-medium">{currentProfile?.username}</h3>
-										<p className="text-muted-foreground">{currentProfile?.email}</p>
-										<p className="text-sm text-muted-foreground">Role: {currentProfile?.role}</p>
-									</div>
-								</div>
-								<div className="border-t border-border pt-6">
-									<div className="flex justify-between items-center">
-										<div>
-											<h4 className="font-medium">Account Information</h4>
-											<p className="text-sm text-muted-foreground">
-												Username: {currentProfile?.username}
-											</p>
-											<p className="text-sm text-muted-foreground">
-												Email: {currentProfile?.email}
-											</p>
-											<p className="text-sm text-muted-foreground">
-												Role: {currentProfile?.role}
-											</p>
-											<p className="text-sm text-muted-foreground">
-												Status: {currentProfile?.isActive ? "Active" : "Inactive"}
-											</p>
+								)}
+							</CardContent>
+						</Card>
+					)}
+
+					{activeTab === "profile" && (
+						<Card>
+							<CardHeader>
+								<CardTitle>Profile</CardTitle>
+								<CardDescription>Manage your account settings</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<div className="grid gap-4">
+									<div className="flex items-center gap-4">
+										<div className="bg-primary/10 p-3 rounded-full">
+											<User className="h-6 w-6 text-primary" />
 										</div>
+										<div>
+											<h3 className="font-medium">{currentProfile?.username}</h3>
+											<p className="text-sm text-muted-foreground">{currentProfile?.email}</p>
+										</div>
+									</div>
+
+									<div className="border-t border-border pt-4">
 										<Button onClick={handleEditProfile}>
 											<Edit className="mr-2 h-4 w-4" />
 											Edit Profile
 										</Button>
 									</div>
 								</div>
-							</div>
-						</CardContent>
-					</Card>
-				</TabsContent>
-			</Tabs>
+							</CardContent>
+						</Card>
+					)}
+				</div>
+			</div>
 		</div>
 	)
 }

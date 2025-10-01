@@ -18,6 +18,9 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_HOST: "%"
+    # Limit memory to 1GB for MySQL (sufficient for development)
+    mem_limit: 1024m
+    mem_reservation: 512m
 
   # Backend server service with hot-reloading
   server:
@@ -40,6 +43,9 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
+    # Limit memory to 1GB for Node.js server
+    mem_limit: 1024m
+    mem_reservation: 512m
 
   # Frontend service with hot-reloading
   frontend:
@@ -60,6 +66,9 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    # Limit memory to 1GB for frontend development
+    mem_limit: 1024m
+    mem_reservation: 512m
 
 # Define named volumes
 volumes:

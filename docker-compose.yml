@@ -21,6 +21,9 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+    # Limit memory to 1GB for MySQL
+    mem_limit: 1024m
+    mem_reservation: 512m
 
   # Backend server service
   server:
@@ -43,6 +46,9 @@ services:
         condition: service_healthy
     volumes:
       - ./server/uploads:/app/uploads
+    # Limit memory to 1GB for Node.js server
+    mem_limit: 1024m
+    mem_reservation: 512m
 
   # Frontend service
   frontend:
@@ -60,6 +66,9 @@ services:
       - VITE_API_URL=${VITE_API_URL}
     depends_on:
       - server
+    # Limit memory to 1GB for frontend
+    mem_limit: 1024m
+    mem_reservation: 512m
 
 # Define named volumes
 volumes:

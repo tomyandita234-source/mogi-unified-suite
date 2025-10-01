@@ -1,7 +1,10 @@
 // API configuration and utility functions
 import { handleApiError } from "@/utils/errorHandler"
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"
+// Use relative URLs for proxy support in development
+// In production, this will use the full API URL from environment variables
+const API_BASE_URL =
+	import.meta.env.MODE === "development" ? "" : import.meta.env.VITE_API_URL || "http://localhost:5000"
 
 // Generic fetch function with error handling
 async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -79,6 +82,8 @@ export interface Blog {
 	createdBy: string
 	source: string
 	isShow: boolean
+	productId?: string // Optional reference to Product
+	product?: Product // Optional product data
 	createdAt: string
 	updatedAt: string
 }
@@ -87,6 +92,7 @@ export const BlogAPI = {
 	getAll: () => fetchAPI<Blog[]>("/api/blogs"),
 	getById: (id: string) => fetchAPI<Blog>(`/api/blogs/${id}`),
 	getBySlug: (slug: string) => fetchAPI<Blog>(`/api/blogs/slug/${slug}`),
+	getByProductId: (productId: string) => fetchAPI<Blog[]>(`/api/blogs/product/${productId}`),
 	create: (data: Partial<Blog>) =>
 		fetchAPI<Blog>("/api/blogs", {
 			method: "POST",
@@ -165,6 +171,7 @@ export interface Product {
 	isActive: boolean
 	imageUrl: string
 	sortOrder: number
+	blogs?: Blog[] // Optional blogs data
 	createdAt: string
 	updatedAt: string
 }

@@ -17,8 +17,8 @@ import {
 } from "lucide-react"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
-import { ProductAPI } from "@/lib/api"
-import type { Product } from "@/lib/api"
+import { ProductAPI, BlogAPI } from "@/lib/api"
+import type { Product, Blog } from "@/lib/api"
 
 // Import logos
 import mogiPosLogo from "@/assets/mogi-pos-logo.png"
@@ -34,6 +34,7 @@ const ProductDetail = () => {
 	const { productId } = useParams()
 	const navigate = useNavigate()
 	const [product, setProduct] = useState<Product | null>(null)
+	const [blogs, setBlogs] = useState<Blog[]>([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
@@ -77,7 +78,7 @@ const ProductDetail = () => {
 	}
 
 	useEffect(() => {
-		const fetchProduct = async () => {
+		const fetchData = async () => {
 			try {
 				setLoading(true)
 				setError(null)
@@ -89,9 +90,13 @@ const ProductDetail = () => {
 				// Fetch product from API
 				const fetchedProduct = await ProductAPI.getBySlug(productId)
 				setProduct(fetchedProduct)
+
+				// Fetch blogs related to this product
+				const productBlogs = await BlogAPI.getByProductId(fetchedProduct._id)
+				setBlogs(productBlogs)
 			} catch (err: any) {
-				console.error("Error fetching product:", err)
-				setError(err.message || "Failed to fetch product details")
+				console.error("Error fetching data:", err)
+				setError(err.message || "Failed to fetch data")
 				// Navigate to 404 if product not found
 				if (err.message && err.message.includes("not found")) {
 					navigate("/404")
@@ -101,7 +106,7 @@ const ProductDetail = () => {
 			}
 		}
 
-		fetchProduct()
+		fetchData()
 	}, [productId, navigate])
 
 	if (loading) {
@@ -265,8 +270,53 @@ const ProductDetail = () => {
 					</div>
 				</section>
 
+				{/* Product Blogs Section */}
+				{blogs.length > 0 && (
+					<section className="py-16 px-4 sm:px-6 lg:px-8 bg-accent/5">
+						<div className="container-width">
+							<div className="text-center mb-16">
+								<h2 className="section-title">Blog Terkait Produk</h2>
+								<p className="section-subtitle">
+									Temukan tips dan informasi terbaru tentang {product.name}
+								</p>
+							</div>
+
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+								{blogs.map((blog) => (
+									<div
+										key={blog._id}
+										className="bg-background rounded-xl border border-border overflow-hidden hover:shadow-lg transition-shadow"
+									>
+										{blog.image && (
+											<img
+												src={blog.image}
+												alt={blog.images_alt || blog.title}
+												className="w-full h-48 object-cover"
+											/>
+										)}
+										<div className="p-6">
+											<h3 className="heading-md mb-2 text-foreground">{blog.title}</h3>
+											<p className="body-sm text-muted-foreground mb-4 line-clamp-3">
+												{blog.body.replace(/<[^>]*>/g, "").substring(0, 150)}...
+											</p>
+											<div className="flex justify-between items-center">
+												<span className="text-xs text-muted-foreground">
+													{new Date(blog.createdAt).toLocaleDateString("id-ID")}
+												</span>
+												<Button variant="outline" size="sm">
+													Baca Selengkapnya
+												</Button>
+											</div>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					</section>
+				)}
+
 				{/* Pricing Section */}
-				<section className="py-16 px-4 sm:px-6 lg:px-8 bg-accent/5">
+				<section className="py-16 px-4 sm:px-6 lg:px-8">
 					<div className="container-width">
 						<div className="text-center mb-16">
 							<h2 className="section-title">Pilihan Paket</h2>

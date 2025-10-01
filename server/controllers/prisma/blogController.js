@@ -9,6 +9,28 @@ exports.getAllBlogs = async (req, res) => {
 		const blogs = await prisma.blog.findMany({
 			where: { isShow: true },
 			orderBy: { createdAt: "desc" },
+			include: { product: true }, // Include product data
+		})
+		res.status(200).json(blogs)
+	} catch (error) {
+		res.status(500).json({ message: error.message })
+	}
+}
+
+// Get blogs by product ID
+exports.getBlogsByProductId = async (req, res) => {
+	try {
+		const productId = parseInt(req.params.productId)
+		if (isNaN(productId)) {
+			return res.status(400).json({ message: "Invalid product ID" })
+		}
+
+		const blogs = await prisma.blog.findMany({
+			where: {
+				AND: [{ isShow: true }, { productId: productId }],
+			},
+			orderBy: { createdAt: "desc" },
+			include: { product: true },
 		})
 		res.status(200).json(blogs)
 	} catch (error) {
@@ -21,6 +43,7 @@ exports.getBlogById = async (req, res) => {
 	try {
 		const blog = await prisma.blog.findUnique({
 			where: { id: parseInt(req.params.id) },
+			include: { product: true },
 		})
 
 		if (!blog) {
@@ -55,6 +78,14 @@ exports.createBlog = async (req, res) => {
 			isShow: req.body.isShow !== undefined ? Boolean(req.body.isShow) : false,
 		}
 
+		// Add product ID if provided
+		if (req.body.productId) {
+			const productId = parseInt(req.body.productId)
+			if (!isNaN(productId)) {
+				sanitizedData.productId = productId
+			}
+		}
+
 		// Handle image upload if present
 		if (req.file) {
 			sanitizedData.image = `/uploads/${req.file.filename}`
@@ -64,6 +95,7 @@ exports.createBlog = async (req, res) => {
 
 		const blog = await prisma.blog.create({
 			data: sanitizedData,
+			include: { product: true },
 		})
 
 		res.status(201).json(blog)
@@ -116,6 +148,18 @@ exports.updateBlog = async (req, res) => {
 			sanitizedData.isShow = Boolean(req.body.isShow)
 		}
 
+		// Update product ID if provided
+		if (req.body.productId !== undefined) {
+			if (req.body.productId === null) {
+				sanitizedData.productId = null
+			} else {
+				const productId = parseInt(req.body.productId)
+				if (!isNaN(productId)) {
+					sanitizedData.productId = productId
+				}
+			}
+		}
+
 		// Handle image upload if present
 		if (req.file) {
 			sanitizedData.image = `/uploads/${req.file.filename}`
@@ -126,6 +170,7 @@ exports.updateBlog = async (req, res) => {
 		const blog = await prisma.blog.update({
 			where: { id: blogId },
 			data: sanitizedData,
+			include: { product: true },
 		})
 
 		res.status(200).json(blog)
