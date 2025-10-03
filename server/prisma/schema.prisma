@@ -14,25 +14,28 @@ model User {
   password  String
   role      String   @default("user")
   isActive  Boolean  @default(true)
+  apiKey    String? // Add this line for API key storage
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Blog {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   title         String
-  slug          String   @unique
-  body          String   @db.Text
+  slug          String    @unique
+  body          String    @db.Text
   image         String?
-  images_alt    String   @default("MogiApp Blog Image")
-  images_source String   @default("Morfogenesis Teknologi Indonesia Creative Team")
-  createdBy     String   @default("Admin")
-  source        String   @default("Morfogenesis Teknologi Indonesia")
-  isShow        Boolean  @default(false)
+  images_alt    String    @default("MogiApp Blog Image")
+  images_source String    @default("Morfogenesis Teknologi Indonesia Creative Team")
+  createdBy     String    @default("Admin")
+  source        String    @default("Morfogenesis Teknologi Indonesia")
+  externalUrl   String?   @unique // Add this line for external URL tracking
+  publishedAt   DateTime? // Add this line for publication date
+  isShow        Boolean   @default(false)
   productId     Int? // Optional reference to Product
-  product       Product? @relation(fields: [productId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  product       Product?  @relation(fields: [productId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Product {
@@ -59,5 +62,29 @@ model Contact {
   email     String
   phone     String?
   message   String   @db.Text
+  createdAt DateTime @default(now())
+}
+
+model Career {
+  id           Int      @id @default(autoincrement())
+  title        String
+  department   String
+  location     String
+  type         String   @default("Full-time")
+  experience   String
+  description  String   @db.Text
+  requirements Json
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Add this model for task logging
+model TaskLog {
+  id        Int      @id @default(autoincrement())
+  taskName  String
+  status    String // SUCCESS, ERROR, etc.
+  details   String   @db.Text
   createdAt DateTime @default(now())
 }

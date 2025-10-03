@@ -6,11 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "init-db": "node prisma/seed.js",
+    "init-db": "node init-db.js",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev --name init",
     "prisma:deploy": "npx prisma migrate deploy",
-    "deploy:live": "node prisma/seed.js && npx prisma migrate deploy"
+    "deploy:live": "node init-db.js && npx prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",
@@ -23,8 +23,10 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.15.1",
+    "node-cron": "^4.2.1",
     "nodemailer": "^6.9.4",
     "prisma": "^6.16.2",
+    "rss-parser": "^3.13.0",
     "sequelize": "^6.37.7",
     "xss": "^1.0.15",
     "xss-clean": "^0.1.4"

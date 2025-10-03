@@ -1,75 +1,34 @@
+import { useState, useEffect } from "react"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Building, MapPin, Clock, Users, Heart, Award, TrendingUp, Calendar, Mail, Phone } from "lucide-react"
+import { Building, MapPin, Clock, Users, Heart, Award, TrendingUp, Calendar, Mail, Phone, Send } from "lucide-react"
+import { CareerAPI } from "@/lib/api"
+import type { Career } from "@/lib/api"
 
 const Careers = () => {
-	const positions = [
-		{
-			id: 1,
-			title: "Senior Frontend Developer",
-			department: "Engineering",
-			location: "Jakarta, Indonesia",
-			type: "Full-time",
-			experience: "3+ years",
-			description:
-				"Bertanggung jawab untuk mengembangkan dan memelihara antarmuka pengguna yang responsif dan menarik menggunakan React dan teknologi modern lainnya.",
-			requirements: [
-				"Pengalaman dengan React, TypeScript, dan ekosistemnya",
-				"Pemahaman mendalam tentang state management (Redux, Context API)",
-				"Pengalaman dengan testing (Jest, React Testing Library)",
-				"Pemahaman tentang aksesibilitas web dan SEO",
-			],
-		},
-		{
-			id: 2,
-			title: "Backend Engineer",
-			department: "Engineering",
-			location: "Remote",
-			type: "Full-time",
-			experience: "2+ years",
-			description:
-				"Mengembangkan dan memelihara API dan layanan backend menggunakan Node.js dan database modern.",
-			requirements: [
-				"Pengalaman dengan Node.js dan Express",
-				"Pemahaman tentang database SQL dan NoSQL",
-				"Pengalaman dengan RESTful API dan GraphQL",
-				"Pemahaman tentang keamanan aplikasi web",
-			],
-		},
-		{
-			id: 3,
-			title: "UI/UX Designer",
-			department: "Design",
-			location: "Jakarta, Indonesia",
-			type: "Full-time",
-			experience: "2+ years",
-			description: "Mendesain pengalaman pengguna yang intuitif dan menarik untuk produk digital kami.",
-			requirements: [
-				"Pengalaman dengan Figma, Sketch, atau Adobe XD",
-				"Pemahaman tentang prinsip desain UI/UX",
-				"Portofolio yang menunjukkan proses desain",
-				"Pengalaman dengan prototyping dan user testing",
-			],
-		},
-		{
-			id: 4,
-			title: "DevOps Engineer",
-			department: "Engineering",
-			location: "Remote",
-			type: "Full-time",
-			experience: "3+ years",
-			description: "Mengelola infrastruktur cloud, CI/CD pipelines, dan monitoring sistem.",
-			requirements: [
-				"Pengalaman dengan Docker dan Kubernetes",
-				"Pengalaman dengan AWS, GCP, atau Azure",
-				"Pemahaman tentang CI/CD (Jenkins, GitHub Actions)",
-				"Pengalaman dengan monitoring tools (Prometheus, Grafana)",
-			],
-		},
-	]
+	const [careers, setCareers] = useState<Career[]>([])
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
+
+	useEffect(() => {
+		fetchCareers()
+	}, [])
+
+	const fetchCareers = async () => {
+		try {
+			setLoading(true)
+			const data = await CareerAPI.getAll()
+			setCareers(data)
+		} catch (err: any) {
+			console.error("Error fetching careers:", err)
+			setError(err.message || "Failed to fetch careers")
+		} finally {
+			setLoading(false)
+		}
+	}
 
 	const benefits = [
 		{
@@ -165,53 +124,67 @@ const Careers = () => {
 							</p>
 						</div>
 
-						<div className="grid grid-cols-1 gap-6">
-							{positions.map((position) => (
-								<Card key={position.id} className="hover:shadow-lg transition-shadow">
-									<CardHeader>
-										<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-											<div>
-												<CardTitle className="text-xl">{position.title}</CardTitle>
-												<div className="flex flex-wrap items-center gap-4 mt-2">
-													<div className="flex items-center gap-1 text-sm text-muted-foreground">
-														<Building className="h-4 w-4" />
-														<span>{position.department}</span>
+						{loading ? (
+							<div className="flex justify-center items-center py-20">
+								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+							</div>
+						) : error ? (
+							<div className="text-center py-20">
+								<p className="text-muted-foreground">{error}</p>
+							</div>
+						) : careers.length === 0 ? (
+							<div className="text-center py-20">
+								<p className="text-muted-foreground">Tidak ada posisi yang tersedia saat ini.</p>
+							</div>
+						) : (
+							<div className="grid grid-cols-1 gap-6">
+								{careers.map((position) => (
+									<Card key={position._id} className="hover:shadow-lg transition-shadow">
+										<CardHeader>
+											<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+												<div>
+													<CardTitle className="text-xl">{position.title}</CardTitle>
+													<div className="flex flex-wrap items-center gap-4 mt-2">
+														<div className="flex items-center gap-1 text-sm text-muted-foreground">
+															<Building className="h-4 w-4" />
+															<span>{position.department}</span>
+														</div>
+														<div className="flex items-center gap-1 text-sm text-muted-foreground">
+															<MapPin className="h-4 w-4" />
+															<span>{position.location}</span>
+														</div>
+														<Badge variant="secondary">{position.type}</Badge>
 													</div>
-													<div className="flex items-center gap-1 text-sm text-muted-foreground">
-														<MapPin className="h-4 w-4" />
-														<span>{position.location}</span>
-													</div>
-													<Badge variant="secondary">{position.type}</Badge>
+												</div>
+												<Button>Apply Now</Button>
+											</div>
+										</CardHeader>
+										<CardContent>
+											<p className="text-muted-foreground mb-4">{position.description}</p>
+
+											<div className="mb-4">
+												<h4 className="font-medium text-foreground mb-2">Requirements:</h4>
+												<ul className="space-y-1">
+													{position.requirements.map((req, idx) => (
+														<li key={idx} className="flex items-start gap-2">
+															<div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+															<span className="text-sm text-muted-foreground">{req}</span>
+														</li>
+													))}
+												</ul>
+											</div>
+
+											<div className="flex items-center gap-4 text-sm text-muted-foreground">
+												<div className="flex items-center gap-1">
+													<Clock className="h-4 w-4" />
+													<span>{position.experience} experience</span>
 												</div>
 											</div>
-											<Button>Apply Now</Button>
-										</div>
-									</CardHeader>
-									<CardContent>
-										<p className="text-muted-foreground mb-4">{position.description}</p>
-
-										<div className="mb-4">
-											<h4 className="font-medium text-foreground mb-2">Requirements:</h4>
-											<ul className="space-y-1">
-												{position.requirements.map((req, idx) => (
-													<li key={idx} className="flex items-start gap-2">
-														<div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-														<span className="text-sm text-muted-foreground">{req}</span>
-													</li>
-												))}
-											</ul>
-										</div>
-
-										<div className="flex items-center gap-4 text-sm text-muted-foreground">
-											<div className="flex items-center gap-1">
-												<Clock className="h-4 w-4" />
-												<span>{position.experience} experience</span>
-											</div>
-										</div>
-									</CardContent>
-								</Card>
-							))}
-						</div>
+										</CardContent>
+									</Card>
+								))}
+							</div>
+						)}
 					</div>
 				</section>
 

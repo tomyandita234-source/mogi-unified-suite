@@ -3,7 +3,7 @@ import { ContactAPI } from "../lib/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Phone, Mail, MapPin, Send } from "lucide-react"
+import { Phone, Mail, MapPin, Send, MessageCircle } from "lucide-react"
 
 const ContactSection = () => {
 	const [formData, setFormData] = useState({
@@ -93,6 +93,14 @@ const ContactSection = () => {
 		} finally {
 			setIsSubmitting(false)
 		}
+	}
+
+	// WhatsApp contact function
+	const handleWhatsAppClick = () => {
+		const phoneNumber = "6281122888001" // Indonesian format without +
+		const message = "Halo, saya ingin berkonsultasi tentang produk MogiApp."
+		const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
+		window.open(whatsappUrl, "_blank")
 	}
 
 	return (
@@ -192,6 +200,14 @@ const ContactSection = () => {
 								</Button>
 							</div>
 						</form>
+
+						{/* WhatsApp Contact Button */}
+						<div className="mt-6">
+							<Button onClick={handleWhatsAppClick} className="w-full bg-green-500 hover:bg-green-600">
+								<MessageCircle className="mr-2 h-4 w-4" />
+								Kontak Sales via WhatsApp
+							</Button>
+						</div>
 					</div>
 
 					{/* Contact Information */}

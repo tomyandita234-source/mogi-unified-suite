@@ -234,7 +234,7 @@ exports.updateUser = async (req, res) => {
 
 		if (req.body.email !== undefined) {
 			sanitizedData.email = xss(req.body.email)
-			
+
 			// Validate email format if provided
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 			if (!emailRegex.test(sanitizedData.email)) {
@@ -333,6 +333,50 @@ exports.deleteUser = async (req, res) => {
 		})
 
 		res.status(200).json({ message: "User deleted successfully" })
+	} catch (error) {
+		res.status(500).json({ message: error.message })
+	}
+}
+
+// Reset user password (admin only)
+exports.resetUserPassword = async (req, res) => {
+	try {
+		// Check if user is admin
+		if (req.userRole !== "admin") {
+			return res.status(403).json({ message: "Access denied. Admin only." })
+		}
+
+		const userId = parseInt(req.params.id)
+		if (isNaN(userId)) {
+			return res.status(400).json({ message: "Invalid user ID" })
+		}
+
+		// Generate a random password
+		const randomPassword = Math.random().toString(36).slice(-8)
+		const hashedPassword = await bcrypt.hash(randomPassword, 10)
+
+		// Update user password
+		const user = await prisma.user.update({
+			where: { id: userId },
+			data: { password: hashedPassword },
+			select: {
+				id: true,
+				username: true,
+				email: true,
+				role: true,
+				isActive: true,
+				createdAt: true,
+				updatedAt: true,
+			},
+		})
+
+		// In a real application, you would send the new password to the user's email
+		// For now, we'll just return it in the response
+		res.status(200).json({
+			message: "Password reset successfully",
+			newPassword: randomPassword,
+			user: user,
+		})
 	} catch (error) {
 		res.status(500).json({ message: error.message })
 	}

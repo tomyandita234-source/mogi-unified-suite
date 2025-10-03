@@ -5,8 +5,13 @@ const userRoutes = require("./routes/userRoutes")
 const productRoutes = require("./routes/productRoutes")
 const contactRoutes = require("./routes/contactRoutes")
 const sampleDataRoutes = require("./routes/sampleDataRoutes")
+const analyticsRoutes = require("./routes/analyticsRoutes")
+const apiRoutes = require("./routes/apiRoutes")
+const careerRoutes = require("./routes/careerRoutes")
 const securityMiddleware = require("./middleware/securityMiddleware")
 const errorHandler = require("./middleware/errorHandler")
+// Add this line to import the scheduled tasks
+const ScheduledTasks = require("./services/scheduledTasks")
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -37,6 +42,9 @@ app.use("/api/users", userRoutes)
 app.use("/api/products", productRoutes)
 app.use("/api/contact", contactRoutes)
 app.use("/api/sample-data", sampleDataRoutes)
+app.use("/api/analytics", analyticsRoutes)
+app.use("/api/external", apiRoutes)
+app.use("/api/careers", careerRoutes)
 
 // Error handling middleware (should be last middleware)
 app.use(errorHandler)
@@ -48,6 +56,8 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, "0.0.0.0", () => {
 	console.log(`Server is running on port ${PORT}`)
+	// Initialize scheduled tasks
+	ScheduledTasks.init()
 })
 
 module.exports = app

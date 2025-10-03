@@ -35,12 +35,42 @@ async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise
 			throw new Error(errorMessage)
 		}
 
-		return await response.json()
+		const data = await response.json()
+
+		// Transform the data to map 'id' to '_id' for compatibility
+		if (Array.isArray(data)) {
+			return data.map((item) => transformIdField(item)) as T
+		} else {
+			return transformIdField(data) as T
+		}
 	} catch (error) {
 		console.error(`Error fetching ${url}:`, error)
 		handleApiError(error, `Failed to fetch data from ${endpoint}`)
 		throw error
 	}
+}
+
+// Helper function to transform 'id' to '_id'
+function transformIdField(obj: any): any {
+	if (obj === null || typeof obj !== "object") {
+		return obj
+	}
+
+	// Create a new object with _id property if id exists
+	if (obj.hasOwnProperty("id")) {
+		const { id, ...rest } = obj
+		return { _id: id.toString(), ...rest }
+	}
+
+	// Recursively transform nested objects
+	const transformed: any = {}
+	for (const key in obj) {
+		if (obj.hasOwnProperty(key)) {
+			transformed[key] = transformIdField(obj[key])
+		}
+	}
+
+	return transformed
 }
 
 // Generic fetch function with FormData support for file uploads
@@ -72,7 +102,14 @@ async function fetchAPIWithFile<T>(endpoint: string, formData: FormData, method:
 			throw new Error(errorMessage)
 		}
 
-		return await response.json()
+		const data = await response.json()
+
+		// Transform the data to map 'id' to '_id' for compatibility
+		if (Array.isArray(data)) {
+			return data.map((item) => transformIdField(item)) as T
+		} else {
+			return transformIdField(data) as T
+		}
 	} catch (error) {
 		console.error(`Error fetching ${url}:`, error)
 		handleApiError(error, `Failed to upload file to ${endpoint}`)
@@ -190,7 +227,6 @@ export const ProductAPI = {
 	getAll: () => fetchAPI<Product[]>("/api/products"),
 	getById: (id: string) => fetchAPI<Product>(`/api/products/${id}`),
 	getBySlug: (slug: string) => fetchAPI<Product>(`/api/products/slug/${slug}`),
-	getByCategory: (category: string) => fetchAPI<Product[]>(`/api/products/category/${category}`),
 	create: (data: Partial<Product>) =>
 		fetchAPI<Product>("/api/products", {
 			method: "POST",
@@ -203,11 +239,7 @@ export const ProductAPI = {
 		Object.keys(data).forEach((key) => {
 			const value = data[key as keyof Product]
 			if (value !== undefined && value !== null) {
-				if (typeof value === "object") {
-					formData.append(key, JSON.stringify(value))
-				} else {
-					formData.append(key, value as string)
-				}
+				formData.append(key, value as string)
 			}
 		})
 
@@ -228,11 +260,7 @@ export const ProductAPI = {
 		Object.keys(data).forEach((key) => {
 			const value = data[key as keyof Product]
 			if (value !== undefined && value !== null) {
-				if (typeof value === "object") {
-					formData.append(key, JSON.stringify(value))
-				} else {
-					formData.append(key, value as string)
-				}
+				formData.append(key, value as string)
 			}
 		})
 
@@ -247,15 +275,50 @@ export const ProductAPI = {
 		}),
 }
 
+// Career API
+export interface Career {
+	_id: string
+	title: string
+	department: string
+	location: string
+	type: string
+	experience: string
+	description: string
+	requirements: string[]
+	isActive: boolean
+	sortOrder: number
+	createdAt: string
+	updatedAt: string
+}
+
+export const CareerAPI = {
+	getAll: () => fetchAPI<Career[]>("/api/careers"),
+	getById: (id: string) => fetchAPI<Career>(`/api/careers/${id}`),
+	create: (data: Partial<Career>) =>
+		fetchAPI<Career>("/api/careers", {
+			method: "POST",
+			body: JSON.stringify(data),
+		}),
+	update: (id: string, data: Partial<Career>) =>
+		fetchAPI<Career>(`/api/careers/${id}`, {
+			method: "PUT",
+			body: JSON.stringify(data),
+		}),
+	delete: (id: string) =>
+		fetchAPI<{ success: boolean }>(`/api/careers/${id}`, {
+			method: "DELETE",
+		}),
+}
+
 // User API
 export interface User {
 	_id: string
 	username: string
 	email: string
 	role: string
-	isActive?: boolean
-	createdAt?: string
-	updatedAt?: string
+	isActive: boolean
+	createdAt: string
+	updatedAt: string
 }
 
 export const UserAPI = {
@@ -275,7 +338,6 @@ export const UserAPI = {
 			method: "PUT",
 			body: JSON.stringify(data),
 		}),
-	// Admin functions
 	getAllUsers: () => fetchAPI<User[]>("/api/users"),
 	getUserById: (id: string) => fetchAPI<User>(`/api/users/${id}`),
 	updateUser: (id: string, data: Partial<User>) =>
@@ -284,42 +346,98 @@ export const UserAPI = {
 			body: JSON.stringify(data),
 		}),
 	deleteUser: (id: string) =>
-		fetchAPI<{ message: string }>(`/api/users/${id}`, {
+		fetchAPI<{ success: boolean }>(`/api/users/${id}`, {
 			method: "DELETE",
+		}),
+	resetUserPassword: (id: string) =>
+		fetchAPI<{ newPassword: string }>("/api/users/reset-password", {
+			method: "POST",
+			body: JSON.stringify({ userId: id }),
 		}),
 }
 
 // Contact API
-export interface ContactForm {
+export interface ContactMessage {
+	_id: string
 	name: string
 	email: string
 	phone?: string
 	message: string
-}
-
-export interface ContactMessage extends ContactForm {
-	_id: string
 	createdAt: string
 }
 
 export const ContactAPI = {
-	send: (data: ContactForm) =>
-		fetchAPI<{ success: boolean; message: string }>("/api/contact", {
+	getAll: () => fetchAPI<ContactMessage[]>("/api/contact"),
+	getById: (id: string) => fetchAPI<ContactMessage>(`/api/contact/${id}`),
+	send: (data: Omit<ContactMessage, "_id" | "createdAt">) =>
+		fetchAPI<ContactMessage>("/api/contact", {
 			method: "POST",
 			body: JSON.stringify(data),
 		}),
-	// Admin functions
-	getAll: () => fetchAPI<ContactMessage[]>("/api/contact"),
-	getById: (id: string) => fetchAPI<ContactMessage>(`/api/contact/${id}`),
 	delete: (id: string) =>
-		fetchAPI<{ success: boolean; message: string }>(`/api/contact/${id}`, {
+		fetchAPI<{ success: boolean }>(`/api/contact/${id}`, {
 			method: "DELETE",
 		}),
 }
 
-export default {
-	blog: BlogAPI,
-	product: ProductAPI,
-	user: UserAPI,
-	contact: ContactAPI,
+// Analytics API
+export interface DashboardStats {
+	totalBlogs: number
+	totalProducts: number
+	totalContacts: number
+	unreadContacts: number
+	recentBlogs: number
+	activeProducts: number
+	totalUsers: number
+	recentUsers: number
+}
+
+export const AnalyticsAPI = {
+	getDashboardStats: () => fetchAPI<{ stats: DashboardStats }>("/api/analytics/dashboard"),
+	getBlogAnalytics: () => fetchAPI<any>("/api/analytics/blogs"),
+	getProductAnalytics: () => fetchAPI<any>("/api/analytics/products"),
+	getUserAnalytics: () => fetchAPI<any>("/api/analytics/users"),
+}
+
+// External API
+export const ExternalAPI = {
+	generateApiKey: () =>
+		fetchAPI<{ message: string; apiKey: string; user: any }>("/api/external/generate-key", {
+			method: "POST",
+		}),
+
+	getApiKeyInfo: () => fetchAPI<{ user: any }>("/api/external/key-info"),
+
+	revokeApiKey: () =>
+		fetchAPI<{ message: string; user: any }>("/api/external/revoke-key", {
+			method: "DELETE",
+		}),
+
+	// Add this new function for auto blog generation
+	generateBlogsFromRss: (sources: Array<{ url: string; name: string; active: boolean }>) =>
+		fetchAPI<{ message: string; results: any }>("/api/external/generate-blogs", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ sources }),
+		}),
+
+	getBlogPosts: (params?: { limit?: number; offset?: number }) => {
+		const searchParams = new URLSearchParams()
+		if (params?.limit) searchParams.append("limit", params.limit.toString())
+		if (params?.offset) searchParams.append("offset", params.offset.toString())
+		return fetchAPI<{ blogs: Blog[]; total: number; limit: number; offset: number }>(
+			`/api/external/blogs?${searchParams.toString()}`
+		)
+	},
+
+	getProducts: (params?: { limit?: number; offset?: number }) => {
+		const searchParams = new URLSearchParams()
+		if (params?.limit) searchParams.append("limit", params.limit.toString())
+		if (params?.offset) searchParams.append("offset", params.offset.toString())
+		return fetchAPI<{ products: Product[]; total: number; limit: number; offset: number }>(
+			`/api/external/products?${searchParams.toString()}`
+		)
+	},
 }

@@ -14,20 +14,24 @@ import {
 	Calendar,
 	Clock,
 } from "lucide-react"
-import { BlogAPI, ProductAPI, ContactAPI } from "@/lib/api"
-import type { Blog, Product, ContactMessage } from "@/lib/api"
+import { BlogAPI, ProductAPI, ContactAPI, AnalyticsAPI } from "@/lib/api"
+import type { Blog, Product, ContactMessage, DashboardStats } from "@/lib/api"
 
 const Dashboard = () => {
 	const [blogs, setBlogs] = useState<Blog[]>([])
 	const [products, setProducts] = useState<Product[]>([])
 	const [contacts, setContacts] = useState<ContactMessage[]>([])
-	const [loading, setLoading] = useState(true)
-	const [stats, setStats] = useState({
+	const [stats, setStats] = useState<DashboardStats>({
 		totalBlogs: 0,
 		totalProducts: 0,
 		totalContacts: 0,
 		unreadContacts: 0,
+		recentBlogs: 0,
+		activeProducts: 0,
+		totalUsers: 0,
+		recentUsers: 0,
 	})
+	const [loading, setLoading] = useState(true)
 
 	useEffect(() => {
 		fetchData()
@@ -36,6 +40,11 @@ const Dashboard = () => {
 	const fetchData = async () => {
 		try {
 			setLoading(true)
+
+			// Fetch analytics data
+			const analyticsResponse = await AnalyticsAPI.getDashboardStats()
+
+			// Fetch other data
 			const [blogData, productData, contactData] = await Promise.all([
 				BlogAPI.getAll(),
 				ProductAPI.getAll(),
@@ -46,14 +55,7 @@ const Dashboard = () => {
 			setProducts(productData)
 			setContacts(contactData)
 
-			setStats({
-				totalBlogs: blogData.length,
-				totalProducts: productData.length,
-				totalContacts: contactData.length,
-				unreadContacts: contactData.filter(
-					(contact) => new Date(contact.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-				).length,
-			})
+			setStats(analyticsResponse.stats)
 		} catch (error) {
 			console.error("Error fetching dashboard data:", error)
 		} finally {
@@ -61,11 +63,25 @@ const Dashboard = () => {
 		}
 	}
 
-	// Get most viewed blogs (for demo, we'll sort by ID)
-	const mostViewedBlogs = [...blogs].sort((a, b) => b._id.localeCompare(a._id)).slice(0, 5)
+	// Get most viewed blogs (for demo, we'll sort by ID, but handle undefined IDs)
+	const mostViewedBlogs = [...blogs]
+		.sort((a, b) => {
+			// Handle cases where _id might be undefined
+			const idA = a._id || ""
+			const idB = b._id || ""
+			return idB.localeCompare(idA)
+		})
+		.slice(0, 5)
 
-	// Get most viewed products (for demo, we'll sort by ID)
-	const mostViewedProducts = [...products].sort((a, b) => b._id.localeCompare(a._id)).slice(0, 5)
+	// Get most viewed products (for demo, we'll sort by ID, but handle undefined IDs)
+	const mostViewedProducts = [...products]
+		.sort((a, b) => {
+			// Handle cases where _id might be undefined
+			const idA = a._id || ""
+			const idB = b._id || ""
+			return idB.localeCompare(idA)
+		})
+		.slice(0, 5)
 
 	// Get recent contacts
 	const recentContacts = [...contacts]
@@ -91,7 +107,7 @@ const Dashboard = () => {
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl font-bold">{stats.totalBlogs}</div>
-						<p className="text-xs text-muted-foreground">Blog posts published</p>
+						<p className="text-xs text-muted-foreground">{stats.recentBlogs} new this month</p>
 					</CardContent>
 				</Card>
 
@@ -102,7 +118,7 @@ const Dashboard = () => {
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl font-bold">{stats.totalProducts}</div>
-						<p className="text-xs text-muted-foreground">Active products</p>
+						<p className="text-xs text-muted-foreground">{stats.activeProducts} active</p>
 					</CardContent>
 				</Card>
 
@@ -121,12 +137,12 @@ const Dashboard = () => {
 
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">Page Views</CardTitle>
-						<Eye className="h-4 w-4 text-muted-foreground" />
+						<CardTitle className="text-sm font-medium">Total Users</CardTitle>
+						<Users className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold">12,402</div>
-						<p className="text-xs text-muted-foreground">+12% from last month</p>
+						<div className="text-2xl font-bold">{stats.totalUsers}</div>
+						<p className="text-xs text-muted-foreground">{stats.recentUsers} new this month</p>
 					</CardContent>
 				</Card>
 			</div>
@@ -137,20 +153,19 @@ const Dashboard = () => {
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
 							<TrendingUp className="h-5 w-5" />
-							Most Viewed Blogs
+							Recent Blogs
 						</CardTitle>
-						<CardDescription>Top performing blog posts</CardDescription>
+						<CardDescription>Latest published blog posts</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-4">
 							{mostViewedBlogs.map((blog) => (
-								<div key={blog._id} className="flex items-center justify-between">
+								<div key={blog._id || blog.slug} className="flex items-center justify-between">
 									<div className="flex-1 min-w-0">
 										<p className="text-sm font-medium truncate">{blog.title}</p>
 										<p className="text-xs text-muted-foreground truncate">{blog.slug}</p>
 									</div>
 									<div className="flex items-center gap-2">
-										<Badge variant="secondary">1.2K views</Badge>
 										{blog.isShow ? (
 											<Eye className="h-4 w-4 text-green-500" />
 										) : (
@@ -167,21 +182,20 @@ const Dashboard = () => {
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
-							<TrendingUp className="h-5 w-5" />
-							Most Viewed Products
+							<ShoppingCart className="h-5 w-5" />
+							Recent Products
 						</CardTitle>
-						<CardDescription>Top performing products</CardDescription>
+						<CardDescription>Latest added products</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-4">
 							{mostViewedProducts.map((product) => (
-								<div key={product._id} className="flex items-center justify-between">
+								<div key={product._id || product.slug} className="flex items-center justify-between">
 									<div className="flex-1 min-w-0">
 										<p className="text-sm font-medium truncate">{product.name}</p>
 										<p className="text-xs text-muted-foreground capitalize">{product.category}</p>
 									</div>
 									<div className="flex items-center gap-2">
-										<Badge variant="secondary">856 views</Badge>
 										{product.isActive ? (
 											<Eye className="h-4 w-4 text-green-500" />
 										) : (
@@ -208,7 +222,7 @@ const Dashboard = () => {
 					<CardContent>
 						<div className="space-y-4">
 							{recentContacts.map((contact) => (
-								<div key={contact._id} className="flex items-start gap-3">
+								<div key={contact._id || contact.email} className="flex items-start gap-3">
 									<div className="bg-primary/10 p-2 rounded-full">
 										<Mail className="h-4 w-4 text-primary" />
 									</div>

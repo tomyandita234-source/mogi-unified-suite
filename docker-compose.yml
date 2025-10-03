@@ -63,7 +63,7 @@ services:
     env_file:
       - .env
     environment:
-      - VITE_API_URL=${VITE_API_URL}
+      - VITE_API_URL=http://localhost:5000
     depends_on:
       - server
     # Limit memory to 1GB for frontend

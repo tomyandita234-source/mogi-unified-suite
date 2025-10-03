@@ -92,6 +92,7 @@ const ProductDetail = () => {
 				setProduct(fetchedProduct)
 
 				// Fetch blogs related to this product
+				// The _id field contains the original database ID
 				const productBlogs = await BlogAPI.getByProductId(fetchedProduct._id)
 				setBlogs(productBlogs)
 			} catch (err: any) {

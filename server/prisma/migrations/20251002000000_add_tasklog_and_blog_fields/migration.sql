@@ -1,0 +1,15 @@
+-- AlterTable
+ALTER TABLE `Blog` ADD COLUMN `externalUrl` VARCHAR(191) NULL UNIQUE;
+ALTER TABLE `Blog` ADD COLUMN `publishedAt` DATETIME(3) NULL;
+ALTER TABLE `User` ADD COLUMN `apiKey` VARCHAR(191) NULL;
+
+-- CreateTable
+CREATE TABLE `TaskLog` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `taskName` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `details` TEXT NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

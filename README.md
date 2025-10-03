@@ -87,6 +87,12 @@ mogi-unified-suite/
 # Build and start production services
 docker-compose up -d
 
+# Run database migrations
+docker exec -it mogiapp-server npx prisma migrate deploy
+
+# Initialize database with sample data
+docker exec -it mogiapp-server npm run init-db
+
 # View logs
 docker-compose logs -f
 ```
@@ -96,6 +102,33 @@ docker-compose logs -f
 ```bash
 # Build and start development services with hot-reloading
 docker-compose -f docker-compose.dev.yml up -d
+
+# Initialize database with sample data
+docker exec -it mogiapp-server-dev npm run init-db
+
+# View logs
+docker-compose -f docker-compose.dev.yml logs -f
+```
+
+### Docker Services Overview
+
+-   **MySQL Database**:
+    -   Production: Port 3306, Container: `mogiapp-mysql`
+    -   Development: Port 3307, Container: `mogiapp-mysql-dev`
+-   **Backend Server**: Port 5000
+-   **Frontend**:
+    -   Production: Port 80, Container: `mogiapp-frontend`
+    -   Development: Port 8082, Container: `mogiapp-frontend-dev`
+
+### Database Access
+
+```bash
+# Access MySQL database directly
+# Production:
+docker exec -it mogiapp-mysql mysql -u mogiuser -pmogipassword mogiapp
+
+# Development:
+docker exec -it mogiapp-mysql-dev mysql -u mogiuser -pmogipassword mogiapp
 ```
 
 ## 🔧 Manual Deployment
@@ -193,4 +226,54 @@ docker-compose -f docker-compose.dev.yml up -d
 
 -   `GET /api/blogs` - Get all blogs
 -   `GET /api/blogs/:id` - Get blog by ID
--   `POST /api/blogs` - Create new blog (admin
+-   `POST /api/blogs` - Create new blog (admin only)
+-   `PUT /api/blogs/:id` - Update blog (admin only)
+-   `DELETE /api/blogs/:id` - Delete blog (admin only)
+
+### Product Management
+
+-   `GET /api/products` - Get all products
+-   `GET /api/products/:id` - Get product by ID
+-   `POST /api/products` - Create new product (admin only)
+-   `PUT /api/products/:id` - Update product (admin only)
+-   `DELETE /api/products/:id` - Delete product (admin only)
+
+## 🛠️ Development Workflow
+
+1. **Frontend Development**:
+
+    - Edit files in `src/` directory
+    - Changes automatically reload in development mode
+
+2. **Backend Development**:
+
+    - Edit files in `server/` directory
+    - Server automatically restarts in development mode
+
+3. **Database Changes**:
+    - Modify `server/prisma/schema.prisma`
+    - Run `npx prisma migrate dev --name migration_name` to create migration
+    - Run `npx prisma generate` to update Prisma client
+
+## 🧪 Testing
+
+```bash
+# Run frontend tests
+npm test
+
+# Run backend tests
+cd server
+npm test
+```
+
+## 📖 Documentation
+
+For detailed documentation, please refer to:
+
+-   [DOCKER_SETUP_GUIDE.md](DOCKER_SETUP_GUIDE.md) - Comprehensive Docker setup guide
+-   [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment instructions
+-   [PRISMA_DEPLOYMENT_GUIDE.md](PRISMA_DEPLOYMENT_GUIDE.md) - Prisma deployment guide
+
+## 🤝 Support
+
+For support, please contact the development team or create an issue in the repository.
